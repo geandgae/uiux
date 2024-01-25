@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ia</title>
+    <link href="./assets/css/default.css" type="text/css" media="all" rel="stylesheet" />
+    <script type="module" defer src="./assets/js/ia.js"></script>
+  </head>
+  <body>
+
+    <!-- loading -->
+    <div class="loading active"></div>
+    <!-- //loading -->
+
+    <!-- wrap -->
+    <div id="wrap">
+      <!-- header -->
+      <header class="header">
+        <!-- hta -->
+        <div class="hta">
+          <h1 class="logo">ge</h1>
+          <div>search</div>
+          <div>options : mode / layout / progress toggle / guide / game</div>
+        </div>
+        <!-- //hta -->
+
+        <div class="selector">
+          <span class="all">
+            <label for="chkAll">전체선택</label>
+            <input type="checkbox" id="chkAll" name="chkAll">
+          </span>
+          <div class="boxs">
+            <span>
+              <label for="chk1">chk1</label>
+              <input type="checkbox" id="chk1" name="chk1" value="1">
+            </span>
+            <span>
+              <label for="chk2">chk2</label>
+              <input type="checkbox" id="chk2" name="chk2" value="2">
+            </span>
+            <span>
+              <label for="chk3">chk3</label>
+              <input type="checkbox" id="chk3" name="chk3" value="3">
+            </span>
+            <span>
+              <label for="chk4">chk4</label>
+              <input type="checkbox" id="chk4" name="chk4" value="4">
+            </span>
+          </div>
+        </div>
+
+        <!-- filter -->
+        <div class="filter">
+          <!-- type_author -->
+          <select name="author">
+          </select>
+          <!-- //type_author -->
+          <!-- type_state -->
+          <select name="state">
+          </select>
+          <!-- //type_state -->
+          <!-- search -->
+          <fieldset class="search">
+            <legend>search fieldset</legend>
+            <label for="table_search">검색</label>
+            <input type="text" id="table_search">
+            <button type="button" class="btn">버튼</button>
+          </fieldset>
+          <!-- //search -->
+          <!-- category -->
+          <ul class="category">
+          </ul>
+          <!-- //category -->
+        </div>
+        <!-- //filter -->
+
+        <!-- progress -->
+        <div class="progress">
+        </div>
+        <!-- //progress -->
+
+        <!-- counter -->
+        <div class="counter">
+        </div>
+        <!-- //counter -->
+      </header>
+      <!-- header -->
+
+      <!-- container -->
+      <main class="container">
+        <!-- gnb -->
+        <section class="gnb">
+          <h2>h2</h2>
+          <div>option : list / buttons</div>
+          <nav>
+            <ul>
+              <li><button type="button" class="btn">gnbbtn</button></li>
+            </ul>
+          </nav>
+        </section>
+        <!-- //gnb -->
+        <!-- preview : false -->
+        <section class="preview"> 
+        </section>
+        <!-- //preview : false -->
+        <!-- contents : data view -->
+        <section class="contents">
+        </section>
+        <!-- //contents : data view  -->
+      </main>
+      <!-- //container -->
+
+      <!-- footer : floating-->
+      <footer class="footer">
+        <div>update</div>
+        <div>progress details</div>
+        <div>mini game</div>
+      </footer>
+      <!-- //footer : floating -->
+    </div>
+    <!-- //wrap -->
+    
+    <!-- outland : toast -->
+    <div id="outland">  
+    </div>
+    <!-- //outland : toast -->
+
+  </body>
+</html>

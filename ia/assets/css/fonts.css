@@ -1,0 +1,21 @@
+@charset "utf-8";
+
+/* fonts  */
+@font-face { 
+	font-family: 'NotoSansKR';
+	font-style: normal;
+	font-weight: 100;  
+	src: url('../fonts/NotoSansKR-Thin.ttf') format('truetype');
+}
+@font-face { 
+	font-family: 'NotoSansKR';
+	font-style: normal;
+	font-weight: 400;  
+	src: url('../fonts/NotoSansKR-Medium.ttf') format('truetype');
+}
+@font-face { 
+	font-family: 'NotoSansKR';
+	font-style: normal;
+	font-weight: 700;  
+	src: url('../fonts/NotoSansKR-ExtraBold.ttf') format('truetype');
+}
