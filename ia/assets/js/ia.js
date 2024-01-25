@@ -2,17 +2,33 @@
 
 // import
 import {crt, st, ctg} from "./data_options.js";
-import {data_set} from "./data_set.js";
+import {dataSet, table_00, arraySet} from "./data_set.js";
 
-let loadDiv = document.querySelector(".loading");
+// init
+const loadDiv = document.querySelector(".loading");
+let dataOrign = [];
+let dataClone = [];
+let dataSort = [];
 
 // s : function
 (function () {
 
-  // init
-  let dataOrign = [];
-  let dataClone = [];
-  let dataSort = [];
+  // 상태값 : 진행/ing   보류/삭제/del     대기/검수/stay/chk     완료/수정/fin
+
+  // new
+  console.log(dataSet);
+  console.log(table_00);
+  console.log(arraySet);
+  for (const [key, value] of Object.entries(table_00)) {
+    console.log(`Pkey : ${key}`);
+    console.log(`Pvalue : ${value}`);
+    console.log("=====================child");
+    for (const [k, v] of Object.entries(value)) {
+      console.log(`Ckey : ${k}`);
+      console.log(`Cvalue : ${v}`);
+    }
+  }
+
 
   // dataInit
   const dataInit = function(data, out) {
@@ -88,6 +104,7 @@ let loadDiv = document.querySelector(".loading");
   // tableSet
   const tableSet = function() {
     let container = document.querySelector("main .contents");
+    console.log(ctg);
     let article = [];
     for (let item in ctg) {
       let id = ctg[item].id;
@@ -636,19 +653,19 @@ let loadDiv = document.querySelector(".loading");
 
 
   // dataInit
-  dataInit(data_set, dataOrign);
+  // dataInit(dataSet, dataOrign);
   
   // tableSet
-  tableSet();
+  // tableSet();
 
   // filterSet
-  filterSet();
+  // filterSet();
   
   // tableCheck
-  tableCheck();
+  // tableCheck();
 
   // tableSort
-  tableSort();
+  // tableSort();
 
 
   
@@ -679,38 +696,6 @@ let loadDiv = document.querySelector(".loading");
 })();
 // e : function
 
-
-// 기능 테스트 2023-09-22
-// selectAll
-function selectAll() {
-  const all = document.querySelector(".selector .all input[type=checkbox]");
-  const nor = document.querySelectorAll(".selector .boxs input[type=checkbox]");
-  let checked = document.querySelectorAll(".selector .boxs input[type=checkbox]:checked");
-
-  all.addEventListener("click", function() {
-    if (all.checked === true) {
-      for (const item of nor) {
-        item.checked = true;
-      } 
-    } else {
-      for (const item of nor) {
-        item.checked = false;
-      } 
-    }
-  });
-
-  for (const item of nor) {
-    item.addEventListener("click", function() {
-      if (nor.length === checked.length) {
-        all.checked = true;
-      } else {
-        all.checked = false;
-      }
-      checked = document.querySelectorAll(".selector .boxs input[type=checkbox]:checked");
-    })
-  } 
-}
-// selectAll();
 
 
 // 로딩 시간 체크

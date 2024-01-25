@@ -30,6 +30,7 @@ export const ctg = {
   ct00 : {
     id : "table_00",
     title : "테이블 00",
+    author : "user1"
   },
   ct01 : {
     id : "table_01",

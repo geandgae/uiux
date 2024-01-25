@@ -24,8 +24,17 @@ import {data_04} from "./data_04.js";
 //   data_02[item].depth1 = ctg.ct02.title;
 // }
 
+export const table_00 = data_00;
+
+// arraySet
+export const arraySet = [
+  data_00,
+  data_01, 
+  data_02,
+];
+
 // data_set
-export const data_set = [
+export const dataSet = [
   ...data_00,
   ...data_01, 
   ...data_02,
