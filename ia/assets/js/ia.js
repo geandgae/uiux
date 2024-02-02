@@ -272,7 +272,7 @@ let dataSort = [];
     // categoryFilter
     const categoryFilter = function() {
       let article = document.querySelectorAll(".article");
-      let btn = document.querySelectorAll(".filter .category .btn");
+      let btn = document.querySelectorAll(".category .btn");
 
       const evt = function(e) {
         let id = e.currentTarget.id;
@@ -286,7 +286,7 @@ let dataSort = [];
             if (id === i.id) {
               i.classList.remove("hide");
             } else if (id === "table_all") {
-              i.classList.remove("hide")
+              i.classList.remove("hide");
             }
           });
         }
@@ -652,20 +652,20 @@ let dataSort = [];
   
 
 
-  // dataInit
-  // dataInit(dataSet, dataOrign);
+  dataInit
+  dataInit(dataSet, dataOrign);
   
-  // tableSet
-  // tableSet();
+  tableSet
+  tableSet();
 
-  // filterSet
-  // filterSet();
+  filterSet
+  filterSet();
   
-  // tableCheck
-  // tableCheck();
+  tableCheck
+  tableCheck();
 
-  // tableSort
-  // tableSort();
+  tableSort
+  tableSort();
 
 
   

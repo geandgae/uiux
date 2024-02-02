@@ -1,5 +1,6 @@
 @charset "utf-8";
 
+/* root */
 :root {
   --color-prm : #3281ff;
   --color-2nd : #09532a;
@@ -39,7 +40,12 @@
   color: var(--color_font02);
 }
 
+/* commons */
+.hide {
+  display: none !important;
+}
 
+/* loading */
 .loading {
   display: none;
   width: 100%;
@@ -55,25 +61,87 @@
   display: block;
 }
 
+/* layout */
+#wrap { 
+  padding: 0;
+  margin: 0;
+}
 
+/* header */
 .header {
-  border: 1px solid red;
+  background-color: #f9f9f9;
 }
-.container:is(.main) {
-  background-color: #fff;
+.header .hta {
+  display: flex;
+  align-items: center;
+}
+.header .hta .logo {
+  margin-right: auto;
+}
+.header .hta .options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.header .progress {
+  background-color: antiquewhite;
+}
+.header .counter {
+  background-color: rgb(242, 255, 167);
 }
 
-
-.article.hide {
+/* container */
+main:is(.container) {
+  border: 1px solid #111;
+  display: flex;
+  gap: 10px;
+}
+main .gnb {
+  width: 100px;
+}
+main .gnb.fold {
   display: none;
 }
+main .preview {
+  display: none;
+}
+main .contents {
+  flex: 1;
+}
+
+/* footer */
+.footer {
+  height: 200px;
+  background-color: #e6e6e6;
+}
+
+/* floating */
+.floating {
+  display: none;
+  background-color: #fff;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+.floating:is(.active) {
+  display: block;
+}
+.floating .floating-header {
+  display: flex;
+  align-items: center;
+}
 
 
+/* component */
+/* filter */
 .filter {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
 }
+/* category */
 .category {
   margin-top: 1rem;
   display: flex;
@@ -81,8 +149,7 @@
   width: 100%;
   gap: 1rem;
 }
-
-
+/* table */
 .table {
   width: 100%;
 }
@@ -96,9 +163,6 @@
   font-weight: 500;
   color: var(--color_font00);
   background-color: var(--color_bg01);
-}
-.table .hide {
-  display: none;
 }
 .table .fin {
   background-color: rgb(255, 254, 234);
@@ -120,7 +184,6 @@
 }
 .table .select {
   background-color: rgb(231, 231, 231);
-
 }
 .table td.note .btn {
   border: 1px solid #1a1a1a;
@@ -143,7 +206,6 @@
   content: "";
   display: block;
   background-color: #1a1a1a;
-
 }
 .table td.note .btn i::before {
   width: 100%;
@@ -170,8 +232,7 @@
 .table td.note.multi.active .note-memo p {
   display: block;
 }
-
-
+/* toast */
 @keyframes ani-toast {
   0% {
     bottom: 0;
@@ -221,8 +282,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-
+/* progress */
 [class^="progress"] {  
   display: flex;
   align-items: center;
@@ -245,21 +305,4 @@
   height: 100%;
   display: block;
   background-color: rgb(92, 125, 255);
-}
-
-.selector {
-  padding: 30px;
-  margin-bottom: 20px;
-}
-.selector .all {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.selector .boxs {
-  display: flex;
-  align-items: center;
-}
-.selector .boxs span {
-  margin-right: 10px;
 }

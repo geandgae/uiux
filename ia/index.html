@@ -20,46 +20,61 @@
       <header class="header">
         <!-- hta -->
         <div class="hta">
+          <!-- logo -->
           <h1 class="logo">ge</h1>
-          <div>search</div>
-          <div>options : mode / layout / progress toggle / guide / game</div>
+          <!-- //logo -->
+          <!-- filter -->
+          <div class="filter">
+            <!-- type_author -->
+            <select name="author">
+            </select>
+            <!-- //type_author -->
+            <!-- type_state -->
+            <select name="state">
+            </select>
+            <!-- //type_state -->
+            <!-- search -->
+            <fieldset class="search">
+              <legend>search fieldset</legend>
+              <label for="table_search">검색</label>
+              <input type="text" id="table_search">
+              <button type="button" class="btn">버튼</button>
+            </fieldset>
+            <!-- //search -->
+          </div>
+          <!-- //filter -->
+          <!-- options -->
+          <ul class="options">
+            <li><button type="button">mode</button></li>
+            <li><button type="button">layout</button></li>
+            <li><button type="button">progress</button></li>
+            <li><button type="button">guide</button></li>
+            <li><button type="button">game</button></li>
+            <li><button type="button">tip</button></li>
+            <li><button type="button">copymode</button></li>
+          </ul>
+          <!-- //options -->
         </div>
         <!-- //hta -->
 
-        <!-- filter -->
-        <div class="filter">
-          <!-- type_author -->
-          <select name="author">
-          </select>
-          <!-- //type_author -->
-          <!-- type_state -->
-          <select name="state">
-          </select>
-          <!-- //type_state -->
-          <!-- search -->
-          <fieldset class="search">
-            <legend>search fieldset</legend>
-            <label for="table_search">검색</label>
-            <input type="text" id="table_search">
-            <button type="button" class="btn">버튼</button>
-          </fieldset>
-          <!-- //search -->
+        <!-- info -->
+        <div class="info">
+          <!-- progress -->
+          <div class="progress">
+            progress
+          </div>
+          <!-- //progress -->
+          <!-- counter -->
+          <div class="counter">
+            counter
+          </div>
+          <!-- //counter -->
           <!-- category -->
           <ul class="category">
           </ul>
           <!-- //category -->
         </div>
-        <!-- //filter -->
-
-        <!-- progress -->
-        <div class="progress">
-        </div>
-        <!-- //progress -->
-
-        <!-- counter -->
-        <div class="counter">
-        </div>
-        <!-- //counter -->
+        <!-- //info -->
       </header>
       <!-- header -->
 
@@ -76,24 +91,38 @@
           </nav>
         </section>
         <!-- //gnb -->
-        <!-- preview : false -->
-        <section class="preview"> 
+        <!-- preview -->
+        <section class="preview">
+          preview
         </section>
-        <!-- //preview : false -->
+        <!-- //preview -->
         <!-- contents : data view -->
         <section class="contents">
+          contents
         </section>
         <!-- //contents : data view  -->
       </main>
       <!-- //container -->
 
-      <!-- footer : floating-->
+      <!-- footer-->
       <footer class="footer">
-        <div>update</div>
-        <div>progress details</div>
-        <div>mini game</div>
+        footer
       </footer>
-      <!-- //footer : floating -->
+      <!-- //footer -->
+
+      <!-- floating-->
+      <section class="floating active">
+        <div class="floating-header">
+          <h2>floating-header</h2>
+          <button type="button">닫기</button>
+        </div>
+        <div class="floating-body">          
+          <div>update</div>
+          <div>progress details</div>
+          <div>mini game</div>
+        </div>
+      </section>
+      <!-- //floating -->
     </div>
     <!-- //wrap -->
     
