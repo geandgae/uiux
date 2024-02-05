@@ -11,7 +11,7 @@
   --color-black : #000;
   --color-white : #fff;
 
-  --color-dark : #111;
+  --color-dark : #929292;
   --color-dkgray : #414141;
   --color-gray : #929292;
   --color-ltgray : #ddd;
@@ -33,14 +33,14 @@
   --color_font02: #5a5a5a;
   --color_line01: #1a1a1a;
   --color_bg01: #5a5a5a;
-
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 10px;
-  font-weight: 400;
-  color: var(--color_font02);
 }
 
 /* commons */
+* {
+  font-family: 'NotoSansKR', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
 .hide {
   display: none !important;
 }
@@ -69,20 +69,24 @@
 
 /* header */
 .header {
-  background-color: #f9f9f9;
+  /* background-color: var(--color-dark); */
 }
 .header .hta {
   display: flex;
   align-items: center;
+  padding: 10px 0;
+  background-color: var(--color-dark);
 }
 .header .hta .logo {
   margin-right: auto;
+  color: var(--color-white);
 }
 .header .hta .options {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-left: auto;
+  color: var(--color-white);
 }
 .header .progress {
   background-color: antiquewhite;
@@ -143,11 +147,9 @@ main .contents {
 }
 /* category */
 .category {
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
+  /* display: flex; */
+  /* align-items: center; */
   width: 100%;
-  gap: 1rem;
 }
 /* table */
 .table {
