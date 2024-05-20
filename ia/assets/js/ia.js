@@ -1,7 +1,7 @@
 "use strict";
 
 // import
-import {crt, st, ctg} from "./data_options.js";
+import {crt, st, ctg} from "./data_options.js"; 
 import {dataSet, table_00, arraySet} from "./data_set.js";
 
 // init
