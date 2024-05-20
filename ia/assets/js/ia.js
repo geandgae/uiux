@@ -8,7 +8,8 @@ import {dataSet, table_00, arraySet} from "./data_set.js";
 const loadDiv = document.querySelector(".loading");
 let dataOrign = [];
 let dataClone = [];
-let dataSort = [];
+// 정렬용 데이터
+let dataSort = []; 
 
 // s : function
 (function () {
@@ -28,6 +29,16 @@ let dataSort = [];
       console.log(`Cvalue : ${v}`);
     }
   }
+
+  // 로딩부분 삭제
+
+  // 실행 함수 순서
+  // dataInit(dataSet, dataOrign);
+  // tableSet(); > tableView(dataOrign); 안에서 실행
+  // filterSet();
+  // tableCheck();
+  // tableSort(); 기능삭제 사용 안 함
+
 
 
   // dataInit
@@ -332,18 +343,19 @@ let dataSort = [];
 
         // dataFilter 
         dataClone = dataFilter(dataOrign, iv);
+        console.log(dataClone);
         
         // tableView
         // tableView(dataClone);
-        // 로딩 테스트
+        // 로딩 테스트 --확인 후 삭제
         const runResult = async () => {
           console.log("loding");
-          await tableView(dataClone);
+          // await tableView(dataClone);
           console.log("loding-end");
           loadDiv.classList.remove("active");
         }
         runResult();
-        // 로딩 테스트
+        // 로딩 테스트 --확인 후 삭제
         
 
         // reset
@@ -405,7 +417,7 @@ let dataSort = [];
     selectFilter();
   }
 
-  // tableCopy : 복사문법 변경
+  // tableCopy : 복사문법 변경 해야함 execCommand > window.navigator.clipboard.writeText(copyBox.textContent).then(() => { 내용 });
   const tableCopy = function() {
 
     // setToast : 공통으로 빼기
@@ -653,19 +665,19 @@ let dataSort = [];
   
 
 
-  dataInit
+  // dataInit
   dataInit(dataSet, dataOrign);
   
-  tableSet
+  // tableSet
   tableSet();
 
-  filterSet
+  // filterSet
   filterSet();
   
-  tableCheck
+  // tableCheck
   tableCheck();
 
-  tableSort
+  // tableSort
   tableSort();
 
 
