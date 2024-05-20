@@ -15,7 +15,7 @@ let dataSort = [];
 
   // 상태값 : 진행/ing   보류/삭제/del     대기/검수/stay/chk     완료/수정/fin
 
-  // new
+  // new 여기서부터 신규 기능
   console.log(dataSet);
   console.log(table_00);
   console.log(arraySet);
@@ -647,6 +647,7 @@ let dataSort = [];
       });
     }
   }
+  
 
 
   
