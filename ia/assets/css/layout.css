@@ -56,11 +56,10 @@
   left: 0;
   overflow: hidden;
   z-index: 100;
+  &.active {
+    display: block;
+  }
 }
-.loading.active  {
-  display: block;
-}
-
 /* layout */
 #wrap { 
   padding: 0;

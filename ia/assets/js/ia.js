@@ -400,16 +400,33 @@ let dataSort = [];
         // 로딩 테스트
         
       });
-      input.addEventListener("keyup", function() {
-        if (window.event.keyCode == 13) {
-          // 로딩 테스트
-          loadDiv.classList.add("active");
-          setTimeout(() => {
-            searchSel("keyword");
-          }, 0);
-          // 로딩 테스트
-        }
-      });
+
+      // window.event.keyCode 지원 안함 아래 문법 참조
+      // // ex1
+      // function submitTextarea(event) {
+      //   if (event.key === "Enter") {
+      //     alert("전송");
+      //   }
+      // }
+      // let textarea = document.getElementById("my-textarea");
+      // textarea.addEventListener("keyup", (event) => submitTextarea(event));
+      // // ex2
+      // function submitTextarea(event) {
+      //   let key = event.key || event.keyCode;
+
+      //   if (key === "Enter" || key === 13) {
+      //     alert("전송");
+      //   }
+      // }
+      // let textarea2 = document.getElementById("my-textarea");
+      // textarea.addEventListener("keyup", (event) => submitTextarea(event));
+      
+      // 엔터키 사용 안함
+      // input.addEventListener("keyup", () => {
+      //   if (window.event.keyCode == 13) {
+      //     // evt
+      //   }
+      // });
     }
 
     // run
