@@ -298,190 +298,232 @@ let dataSort = [];
     selectFilter();
   };
 
-  // utils : 기타기능 모음
-  const utils = () => {
-    // tableIndex : 전체개수
-    const tableIndex = () => {
-      const el = document.querySelectorAll(".table td.index > p");
-      const counter = document.querySelector(".counter");
-      const length = el.length;
-      counter.innerHTML = `총 ${length} 개`;
-      // 자동번호 부여
-      if (el) {
-        for (let i = 0; i < el.length; i++) {
-          const item = el[i];
-          let num = i + 1;
-          item.innerText = num;
+
+  // tableIndex : 전체개수
+  const tableIndex = () => {
+    const el = document.querySelectorAll(".table td.index > p");
+    const counter = document.querySelector(".counter");
+    const length = el.length;
+    counter.innerHTML = `총 ${length} 개`;
+    // 자동번호 부여
+    if (el) {
+      for (let i = 0; i < el.length; i++) {
+        const item = el[i];
+        let num = i + 1;
+        item.innerText = num;
+      }
+    }
+  };
+
+  // tableState : 진행상태 개수
+  const tableState = () => {
+    const el = document.querySelectorAll(".table tbody tr[data-state]");
+    const l = el.length;
+    const state = {
+      text: {
+        fin: st.fin,
+        mod: st.mod,
+        del: st.del,
+        wait: st.wait,
+        chk: st.chk,
+        ing: st.ing,
+      },
+      count: {
+        fin: 0,
+        mod: 0,
+        del: 0,
+        wait: 0,
+        chk: 0,
+        ing: 0,
+      },
+    };
+    if (el) {
+      el.forEach(function (item) {
+        const text = item.dataset.state;
+        if (text === state.text.fin) {
+          item.classList.add("fin");
+          state.count.fin++;
+        } else if (text === state.text.mod) {
+          item.classList.add("mod");
+          state.count.mod++;
+        } else if (text === state.text.del) {
+          item.classList.add("del");
+          state.count.del++;
+        } else if (text === state.text.wait) {
+          item.classList.add("wait");
+          state.count.wait++;
+        } else if (text === state.text.chk) {
+          item.classList.add("chk");
+          state.count.chk++;
+        } else if (text === state.text.ing) {
+          item.classList.add("ing");
+          state.count.ing++;
         }
+      });
+    }
+
+    // process
+    const total = Math.round((state.count.fin / l) * 100);
+    const progress = document.querySelector(".progress");
+    const inc = `
+      <ul class="progress-info">
+        <li>전체 : ${l}</li>
+        <li>${state.text.fin} : ${state.count.fin}</li>
+        <li>${state.text.mod} : ${state.count.mod}</li>
+        <li>${state.text.del} : ${state.count.del}</li>
+        <li>${state.text.wait} : ${state.count.wait}</li>
+        <li>${state.text.chk} : ${state.count.chk}</li>
+        <li>${state.text.ing} : ${state.count.ing}</li>
+      </ul>
+      <div class="progress-bar">
+        <div class="text">${total}%</div>  
+        <div class="bar">
+          <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${total}" style="width:${total}%"></span>
+        </div>  
+      </div>  
+    `;
+    progress.innerHTML = inc;
+  };
+
+  // tableCopy : 복사문법 변경 해야함 execCommand > window.navigator.clipboard.writeText(copyBox.textContent).then(() => { 내용 });
+  const tableCopy = () => {
+    // setToast : 공통으로 빼기
+    const setToast = function (target) {
+      const outland = document.querySelector("#outland");
+      const toast = `
+        <div class="toast">
+          <div class="inner">
+            <p class="text">
+              <span class="var">
+                "<em>${target}</em>"
+              </span>
+              <span>복사되었습니다.</span>
+            </p>
+          </div>
+        </div>
+      `;
+      outland.innerHTML = toast;
+      // setTimeout(() => {
+      //   outland.innerHTML = "";
+      // }, 500);
+    };
+    
+
+    // 클립보드에 텍스트를 복사하는 함수
+    const copyTextToClipboard = async (el) => {
+      try {
+        // 대상 요소의 텍스트 내용을 클립보드에 복사 시도
+        await navigator.clipboard.writeText(el.textContent);
+
+        // 복사 성공 메시지와 복사된 내용을 콘솔에 출력
+        console.log("복사 완료");
+        console.log(el.textContent);
+
+        // 복사된 내용을 변수에 저장
+        const copyContent = el.textContent;
+
+        // 복사된 내용으로 토스트 팝업 호출 (setToast 함수가 정의되어 있어야 합니다)
+        setToast(copyContent);
+      } catch (error) {
+        // 복사 실패 메시지와 시도한 내용을 콘솔에 출력
+        console.log("복사 실패");
+        console.log(el.textContent);
+        
+        // 에러 메시지를 콘솔에 출력
+        console.error(error);
       }
     };
 
-    // tableState : 진행상태 개수
-    const tableState = () => {
-      const el = document.querySelectorAll(".table tbody tr[data-state]");
-      const l = el.length;
-      const state = {
-        text: {
-          fin: st.fin,
-          mod: st.mod,
-          del: st.del,
-          wait: st.wait,
-          chk: st.chk,
-          ing: st.ing,
-        },
-        count: {
-          fin: 0,
-          mod: 0,
-          del: 0,
-          wait: 0,
-          chk: 0,
-          ing: 0,
-        },
-      };
-      if (el) {
-        el.forEach(function (item) {
-          const text = item.dataset.state;
-          if (text === state.text.fin) {
-            item.classList.add("fin");
-            state.count.fin++;
-          } else if (text === state.text.mod) {
-            item.classList.add("mod");
-            state.count.mod++;
-          } else if (text === state.text.del) {
-            item.classList.add("del");
-            state.count.del++;
-          } else if (text === state.text.wait) {
-            item.classList.add("wait");
-            state.count.wait++;
-          } else if (text === state.text.chk) {
-            item.classList.add("chk");
-            state.count.chk++;
-          } else if (text === state.text.ing) {
-            item.classList.add("ing");
-            state.count.ing++;
+    // 모든 .table td p 요소를 선택
+    const elements = document.querySelectorAll(".table td p");
+
+    // 각 요소에 클릭 이벤트 리스너를 추가
+    elements.forEach(function (item) {
+      item.addEventListener("click", function () {
+        // 클릭된 요소의 텍스트를 클립보드에 복사
+        copyTextToClipboard(item);
+      });
+    });
+
+
+    // // async 타입
+    // const copyTextToClipboard2 = async (target) => {
+    //   try {
+    //     await navigator.clipboard.writeText(target.textContent);
+    //     // success();
+    //     console.log("복사완료");
+    //     console.log(target.textContent);
+    //     // toast 팝업 호출
+    //     const copyContent = target.textContent;
+    //     setToast(copyContent);
+    //   } catch {
+    //     // fail();
+    //     console.log("복사실패");
+    //     console.log(target.textContent);
+    //   }
+    // }
+
+    // const el = document.querySelectorAll(".table td p");
+
+    // if (el) {
+    //   el.forEach(function (item) {
+    //     item.addEventListener("click", function () {
+    //       // then copy
+    //       // window.navigator.clipboard.writeText(item.textContent).then(() => {
+    //       //   console.log(item.textContent);
+    //       // });
+    //       copyTextToClipboard2(item);
+    //     });
+    //   });
+    // }
+  };
+
+  // noteToggle
+  const noteToggle = () => {
+    const evt = function (e) {
+      console.log("noteToggleEvt!!!!! --- evt");
+      e.currentTarget.closest(".note").classList.toggle("active");
+      e.currentTarget.classList.toggle("active");
+    };
+
+    const noteToggleEvt = function () {
+      console.log("noteToggleEvt!!!!! --- loading");
+      const note = document.querySelectorAll(".table td.note");
+      if (note) {
+        note.forEach(function (item) {
+          const memo = item.querySelectorAll(".note-memo p");
+          const btn = item.querySelector(".btn");
+          if (memo.length > 1) {
+            item.closest(".note").classList.add("multi");
+            btn.addEventListener("click", evt);
           }
         });
       }
-
-      // process
-      const total = Math.round((state.count.fin / l) * 100);
-      const progress = document.querySelector(".progress");
-      const inc = `
-        <ul class="progress-info">
-          <li>전체 : ${l}</li>
-          <li>${state.text.fin} : ${state.count.fin}</li>
-          <li>${state.text.mod} : ${state.count.mod}</li>
-          <li>${state.text.del} : ${state.count.del}</li>
-          <li>${state.text.wait} : ${state.count.wait}</li>
-          <li>${state.text.chk} : ${state.count.chk}</li>
-          <li>${state.text.ing} : ${state.count.ing}</li>
-        </ul>
-        <div class="progress-bar">
-          <div class="text">${total}%</div>  
-          <div class="bar">
-            <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${total}" style="width:${total}%"></span>
-          </div>  
-        </div>  
-      `;
-      progress.innerHTML = inc;
     };
 
-    // tableCopy : 복사문법 변경 해야함 execCommand > window.navigator.clipboard.writeText(copyBox.textContent).then(() => { 내용 });
-    const tableCopy = () => {
-      // setToast : 공통으로 빼기
-      const setToast = function (target) {
-        const outland = document.querySelector("#outland");
-        const toast = `
-          <div class="toast">
-            <div class="inner">
-              <p class="text">
-                <span class="var">
-                  "<em>${target}</em>"
-                </span>
-                <span>복사되었습니다.</span>
-              </p>
-            </div>
-          </div>
-        `;
-        outland.innerHTML = toast;
-        // setTimeout(() => {
-        //   outland.innerHTML = "";
-        // }, 500);
-      };
+    noteToggleEvt();
+  };
 
-      const el = document.querySelectorAll(".table td p"); //메모 복사 안됨
+  // tableCheck
+  const tableCheck = () => {
+    const evt = (e) => {
+      // console.log(e.currentTarget);
+      e.currentTarget.classList.toggle("select");
+    };
+    function tableCheckEvt() {
+      const el = document.querySelectorAll(".table tbody tr");
       if (el) {
-        el.forEach(function (item) {
-          item.addEventListener("click", function () {
-            const range = document.createRange();
-            const sel = window.getSelection();
-            // 복사문법 변경 해야함 execCommand > window.navigator.clipboard.writeText(copyBox.textContent).then(() => { 내용 });
-            range.selectNode(item); //텍스트 정보를 Range 객체에 저장
-            sel.removeAllRanges(); //기존 선택정보 삭제
-            sel.addRange(range); //텍스트 정보 선택
-            document.execCommand("copy"); //복사
-            sel.removeRange(range); //선택 정보 삭제
-            // toast
-            const copy = range.endContainer.innerText;
-            setToast(copy);
-          });
+        el.forEach((item) => {
+          item.addEventListener("click", evt);
         });
       }
-    };
+    }
+    // 이벤트를 두번 실행하는 이유 첫 동작시 실행 안됨 원인 찾아서 해결
+    tableCheckEvt();
 
-    // noteToggle
-    const noteToggle = () => {
-      const evt = function (e) {
-        console.log("noteToggleEvt!!!!! --- evt");
-        e.currentTarget.closest(".note").classList.toggle("active");
-        e.currentTarget.classList.toggle("active");
-      };
-
-      const noteToggleEvt = function () {
-        console.log("noteToggleEvt!!!!! --- loading");
-        const note = document.querySelectorAll(".table td.note");
-        if (note) {
-          note.forEach(function (item) {
-            const memo = item.querySelectorAll(".note-memo p");
-            const btn = item.querySelector(".btn");
-            if (memo.length > 1) {
-              item.closest(".note").classList.add("multi");
-              btn.addEventListener("click", evt);
-            }
-          });
-        }
-      };
-
-      noteToggleEvt();
-    };
-
-    // tableCheck
-    const tableCheck = () => {
-      const evt = (e) => {
-        // console.log(e.currentTarget);
-        e.currentTarget.classList.toggle("select");
-      };
-      function tableCheckEvt() {
-        const el = document.querySelectorAll(".table tbody tr");
-        if (el) {
-          el.forEach((item) => {
-            item.addEventListener("click", evt);
-          });
-        }
-      }
-      // 이벤트를 두번 실행하는 이유 첫 동작시 실행 안됨 원인 찾아서 해결
+    document.addEventListener("click", () => {
       tableCheckEvt();
-
-      document.addEventListener("click", () => {
-        tableCheckEvt();
-      });
-    };
-
-    tableIndex();
-    tableState();
-    tableCopy();
-    noteToggle();
-    tableCheck();
+    });
   };
 
   // dataInit
@@ -495,7 +537,17 @@ let dataSort = [];
   filterInit();
 
   // utils
-  utils();
+  tableIndex();
+  tableState();
+  tableCopy();
+  noteToggle();
+  tableCheck();
+
+
+
+
+
+
 
   // 테이블세팅 자동화 data_option 변수 처리
   // 정렬
