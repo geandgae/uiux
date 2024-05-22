@@ -12,7 +12,7 @@ export const st = {
   fin : "완료",
   mod : "수정",
   del : "삭제",
-  wait : "대기",
+  wtn : "대기",
   chk : "검수",
   ing : "진행",
 }

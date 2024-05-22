@@ -25,14 +25,14 @@ import {data_02} from "./data_02.js";
 
 
 // arraySet
-export const arraySet = [
-  data_00,
-  // data_01,
-  // data_02,
-];
+// export const arraySet = [
+//   data_00,
+//   // data_01,
+//   // data_02,
+// ];
 
-// data_set
-export const dataSet = [
+// dataArray
+export const dataArray = [
   ...data_00,
   ...data_01, 
   // ...data_02,

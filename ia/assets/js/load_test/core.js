@@ -2,47 +2,49 @@
 
 // import
 import { at, st, ctg } from "./data_options.js";
-import { dataSet, arraySet } from "./data_set.js";
+import { dataArray } from "./data_set.js";
 // arraySet 사용안함 확인 후 삭제
 
-// s : init
-// 로딩영역
-const loadDiv = document.querySelector(".loading");
 
-// dataOrign : dataSet(data파일모음)을 기반으로 변환된 테이블 저장 배열
-const dataOrign = [];
+// 테이블세팅 자동화 data_option 변수 처리
+// 정렬
+// json 로컬 저장
+// 인클루드
+// 다크모드
+// 로딩
+// ia 디자인
+// core
+// 코드정리 init, 실행부 분리
+// 접근성 분리
+// 제이슨 방식
 
-// dataClone : 필터에서 사용...??
-let dataClone = [];
+// 팝업 1.딤체크 / 2.딤에따른 분기 / 3.팝업의 현재 z-index / 4.팝업종류
 
-// dataSort : 정렬용 데이터
-let dataSort = [];
-// e : init
+// 검색속도 개선
+
+// todo
+// 변경할 점 data_options 변수 변경 ctg(카테고리) > initFilter, initTable / author(사용자) > 필터사용 / st(진행상태) > 상태별 개수
+// 상태값 : 진행/ing   보류/삭제/del     대기/검수/wait/chk     완료/수정/fin
+// 로딩테스트 주석은 비동기처리 / 공통함수로 일괄 처리
+
+
 
 // s : function
-(function () {
-  // todo
-  // 변경할 점 data_options 변수 변경 ctg(카테고리) > filterInit, tableInit / author(사용자) > 필터사용 / st(진행상태) > 상태별 개수
-  // 상태값 : 진행/ing   보류/삭제/del     대기/검수/wait/chk     완료/수정/fin
-  // 로딩테스트 주석은 비동기처리 / 공통함수로 일괄 처리
+const core = (function () {
 
-  // 오브젝트형데이터 for of 테스트
-  for (const [key, value] of Object.entries(dataSet)) {
-    // console.log("==========================");
-    // console.log(`Pkey : ${key}  Pvalue : ${value}`);
-    // console.log("=====================child");
-    for (const [k, v] of Object.entries(value)) {
-      // console.log(`Ckey : ${k}  Cvalue : ${v}`);
-    }
-  }
-  console.log(dataSet);
-  console.log(arraySet);
+  // init 전역변수 선언
+  // 로딩영역
+  const loadDiv = document.querySelector(".loading");
+  // dataOrign : dataArray(data파일모음)을 기반으로 변환된 테이블 저장 배열
+  const dataOrign = [];
+  // dataClone : 필터에서 사용.
+  let dataClone = [];
 
-  // dataInit : dataSet의 데이터를 테이블 형식으로 변환해서 dataOrign 배열에 저장
-  const dataInit = (data, out) => {
-    data.forEach(function (item) {
-      out.push(`
-        <tr data-sort="${item.date}" data-id="${item.id}" data-author="${item.author}" data-state="${item.state}">
+  // initData : dataArray의 데이터를 테이블 형식으로 변환해서 dataOrign 배열에 저장
+  const initData = (data, out) => {
+    data.forEach((item) => {
+      const tableRow = `
+        <tr data-sort="${item.date}" data-id="${item.id}" data-author="${item.author}" data-state="${item.state.trim() === "" ? "대기" : item.state}">
           <td class="index"><p></p></td>
           <td class="depth1"><p>${item.depth1}</p></td>
           <td class="depth2"><p>${item.depth2}</p></td>
@@ -52,28 +54,26 @@ let dataSort = [];
           <td class="name"><p>${item.view_name}</p></td>
           <td class="url"><p><a href="${item.view_url}" target="blank">${item.view_url}</a></p></td>
           <td class="date"><p>${item.date}</p></td>
-          <td class="state"><p>${item.state}</p></td>
+          <td class="state"><p>${item.state.trim() === "" ? "대기" : item.state}</p></td>
           <td class="author"><p>${item.author}</p></td>
           <td class="note" data-wacc-toggle="true">
             <button type="button" class="btn" title="더보기"><i></i></button>
-            <div class="note-memo target">
-              ${item.note}
-            </div>
+            <div class="note-memo target">${item.note}</div>
           </td>
         </tr>
-      `);
+      `;
+      out.push(tableRow);
     });
   };
 
-  // tableInit : data_options ctg(category)의 개수만큼 article을 생성(빈 테이블 생성)
-  const tableInit = () => {
-    const container = document.querySelector("main .contents");
-    const article = [];
-    for (const item in ctg) {
-      const id = ctg[item].id;
-      const title = ctg[item].title;
-      // console.log(ctg[item]);
-      article.push(`
+  // initTable : data_options ctg(category)의 개수만큼 article을 생성(빈 테이블 생성)
+  const initTable = () => {
+    const container = document.querySelector(".contents");
+    // const articles = ctg.map(category => {}) 배열형태
+    // 객체를 배열로 전환
+    const articles = Object.values(ctg).map(category => {
+      const {id, title} = category;
+      return `
         <!-- article -->
         <article class="article" id="${id}">
           <h2>${title}</h2>
@@ -105,377 +105,241 @@ let dataSort = [];
           <!-- //table -->
         </article>
         <!-- //article -->
-      `);
-    }
-    container.innerHTML = article.join("");
-
-    // tableView : 여기에 넣었을대 이점??
-    // tableView(dataOrign);
+      `
+    });
+    container.innerHTML = articles.join("");
   };
 
-  // tableView : tableInit에서 생성한 article에 dataOrign을 뿌림(테이블 실제 데이터 생성)
-  const tableView = (data) => {
-    const el = document.querySelectorAll(".article");
-    if (el) {
-      el.forEach(function (item) {
-        const id = item.getAttribute("id");
-        let tr = [];
-        tr = dataFilter(data, id);
-        item.querySelector("tbody").innerHTML = tr.join("");
-
-        // 로딩 테스트
-        // return new Promise((resolve, reject) => {
-        //   resolve(item.querySelector("tbody").innerHTML = tr.join(""));
-        //   // reject 부분 추가
-        // })
-        // 로딩 테스트
-      });
-    }
-  };
-
-  // dataFilter : tableView, selectFilter 사용
-  const dataFilter = (data, query) => {
-    return data.filter((i) => i.toLowerCase().indexOf(query.toLowerCase()) > -1);
-  };
-
-  // filterInit : 필터 설정
-  const filterInit = () => {
+  // renderTable : initTable에서 생성한 article에 dataOrign을 뿌림(테이블 실제 데이터 생성)
+  const renderTable = (data) => {
     const article = document.querySelectorAll(".article");
+    article.forEach((item) => {
+      const id = item.getAttribute("id");
+      const tableBody = item.querySelector("tbody");
+      const filteredData = dataFilter(data, id);
+      tableBody.innerHTML = filteredData.join("");
 
-    // typeAuthor : 작성자 옵션 생성
-    const typeAuthor = document.querySelector(".filter select[name=author]");
-    const author = [`<option value="">author</option>`];
+      // 로딩 테스트
+      // return new Promise((resolve, reject) => {
+      //   resolve(item.querySelector("tbody").innerHTML = tr.join(""));
+      //   // reject 부분 추가
+      // })
+      // 로딩 테스트
+    });
+  };
+
+
+
+  // utils
+  // initFilter : 필터 옵션 실행
+  const initFilter = () => {
+    initAuthorOptions();
+    initStateOptions();
+    initCategoryButtons();
+    initCategoryFilter();
+    initSelectFilter();
+  }
+
+  // initAuthorOptions : 작성자 옵션 초기화
+  const initAuthorOptions = () => {
+    const authorSelect = document.querySelector(".filter select[name=author]");
+    const authorOptions = [`<option value="">author</option>`];
     for (const item in at) {
-      author.push(`
-        <option value="${at[item]}">${at[item]}</option>
-      `);
+      authorOptions.push(`<option value="${at[item]}">${at[item]}</option>`);
     }
-    typeAuthor.innerHTML = author.join("");
+    authorSelect.innerHTML = authorOptions.join("");
+  }
 
-    // typeState : 상태값 옵션 생성
-    const typeState = document.querySelector(".filter select[name=state]");
-    const state = [`<option value="">state</option>`];
+  // initStateOptions : 상태값 옵션 초기화
+  const initStateOptions = () => {
+    const stateSelect = document.querySelector(".filter select[name=state]");
+    const StateOptions = [`<option value="">state</option>`];
     for (const item in st) {
-      state.push(`
+      StateOptions.push(`
         <option value="${st[item]}">${st[item]}</option>
       `);
     }
-    typeState.innerHTML = state.join("");
+    stateSelect.innerHTML = StateOptions.join("");
+  }
 
-    // typeCategory : 카테고리 버튼 생성 삭제할 수도...
-    const typeCategory = document.querySelector(".category");
-    const category = [`<li><button type="button" class="btn" id="table_all">전체보기</button></li>`];
+  // initCategoryButtons : 카테고리 버튼 초기화 : 카테고리 버튼 생성 삭제할 수도있음
+  const initCategoryButtons = () => {
+    const categoryContainer = document.querySelector(".category");
+    const categorybuttons = [`<li><button type="button" class="btn" id="table_all">전체보기</button></li>`];
     for (const item in ctg) {
       const id = ctg[item].id;
       const title = ctg[item].title;
-      category.push(`
-        <li><button type="button" class="btn" id="${id}">${title}</button></li>
-      `);
+      categorybuttons.push(`<li><button type="button" class="btn" id="${id}">${title}</button></li>`);
     }
-    typeCategory.innerHTML = category.join("");
-
-    // categoryFilter : 카테고리 필터 기능
-    const categoryFilter = () => {
-      // event
-      const evt = (e) => {
-        const id = e.currentTarget.id;
-        const articleView = () => {
-          // article
-          article.forEach((i) => {
-            i.classList.add("hide");
-            if (id === i.id) {
-              i.classList.remove("hide");
-            } else if (id === "table_all") {
-              i.classList.remove("hide");
-            }
-          });
-        };
-        // 로딩 테스트
-        loadDiv.classList.add("active");
-        const promise = function () {
-          return new Promise((resolve, reject) => {
-            resolve(articleView());
-          });
-        };
-        const runResult = async () => {
-          console.log("loding");
-          await promise();
-          console.log("loding-end");
-          loadDiv.classList.remove("active");
-        };
-        setTimeout(() => {
-          runResult();
-        }, 0);
-        // 로딩 테스트
-      };
-      // 실행부
-      const btn = document.querySelectorAll(".category .btn");
-      if (btn) {
-        btn.forEach((item) => {
-          item.addEventListener("click", evt);
-        });
-      }
-    };
-
-    // selectFilter
-    const selectFilter = () => {
-      const select = document.querySelectorAll(".filter select");
-      // searchSel
-      const searchSel = (type) => {
-        // dataFilter : dataFilter함수를 이용 dataOrign을 iv로 필터링 한 후 dataClone에 저장
-        const iv = input.value;
-        dataClone = dataFilter(dataOrign, iv);
-        console.log(dataClone);
-        // tableView : 테이블을 dataClone으로 다시 그림
-        tableView(dataClone);
-
-        // 로딩 테스트 --확인 후 삭제
-        const runResult = async () => {
-          console.log("loding");
-          // await tableView(dataClone);
-          console.log("loding-end");
-          loadDiv.classList.remove("active");
-        };
-        runResult();
-        // 로딩 테스트 --확인 후 삭제
-
-        // reset : 검색창 인풋값 리셋
-        if (select) {
-          select.forEach(function (item) {
-            if (type === item.name) {
-              item.classList.remove("reset");
-            } else {
-              item.classList.add("reset");
-            }
-            if (item.classList.contains("reset")) {
-              item.value = "";
-            }
-          });
-        }
-      };
-
-      // select
-      if (select) {
-        select.forEach((item) => {
-          item.addEventListener("change", function () {
-            const name = item.name;
-            const option = item.options[item.selectedIndex].value;
-            input.value = option;
-            // 로딩 테스트
-            loadDiv.classList.add("active");
-            setTimeout(() => {
-              searchSel(name);
-            }, 0);
-            // 로딩 테스트
-          });
-        });
-      }
-
-      // 버튼이벤트
-      const btn = document.querySelector(".filter .search .btn");
-      // keyword
-      // btn.addEventListener("click", () => {
-      //   // 로딩 테스트
-      //   loadDiv.classList.add("active");
-      //   setTimeout(() => {
-      //     searchSel("keyword");
-      //   }, 0);
-      //   // 로딩 테스트
-      // });
-      const input = document.querySelector(".filter input[type=text]");
-      input.addEventListener("keyup", () => {
-        // 로딩 테스트
-        loadDiv.classList.add("active");
-        setTimeout(() => {
-          searchSel("keyword");
-        }, 0);
-        // 로딩 테스트
-      });
-    };
-
-    // run
-    categoryFilter();
-    selectFilter();
-  };
-
-
-  // tableIndex : 전체개수
-  const tableIndex = () => {
-    const el = document.querySelectorAll(".table td.index > p");
-    const counter = document.querySelector(".counter");
-    const length = el.length;
-    counter.innerHTML = `총 ${length} 개`;
-    // 자동번호 부여
-    if (el) {
-      for (let i = 0; i < el.length; i++) {
-        const item = el[i];
-        let num = i + 1;
-        item.innerText = num;
-      }
+    if(categoryContainer) {
+      categoryContainer.innerHTML = categorybuttons.join("");
     }
-  };
+  }
 
-  // tableState : 진행상태 개수
-  const tableState = () => {
-    const el = document.querySelectorAll(".table tbody tr[data-state]");
-    const l = el.length;
-    const state = {
-      text: {
-        fin: st.fin,
-        mod: st.mod,
-        del: st.del,
-        wait: st.wait,
-        chk: st.chk,
-        ing: st.ing,
-      },
-      count: {
-        fin: 0,
-        mod: 0,
-        del: 0,
-        wait: 0,
-        chk: 0,
-        ing: 0,
-      },
-    };
-    if (el) {
-      el.forEach(function (item) {
-        const text = item.dataset.state;
-        if (text === state.text.fin) {
-          item.classList.add("fin");
-          state.count.fin++;
-        } else if (text === state.text.mod) {
-          item.classList.add("mod");
-          state.count.mod++;
-        } else if (text === state.text.del) {
-          item.classList.add("del");
-          state.count.del++;
-        } else if (text === state.text.wait) {
-          item.classList.add("wait");
-          state.count.wait++;
-        } else if (text === state.text.chk) {
-          item.classList.add("chk");
-          state.count.chk++;
-        } else if (text === state.text.ing) {
-          item.classList.add("ing");
-          state.count.ing++;
+  // initCategoryFilter : 카테고리 필터 초기화
+  const initCategoryFilter = () => {
+    const categoryButtons = document.querySelectorAll(".category .btn");
+    const articles = document.querySelectorAll(".article");
+
+    const filterByCategory = (event) => {
+      const categoryId = event.currentTarget.id;
+
+      articles.forEach((item) => {
+        item.classList.add("hide");
+        if (categoryId === item.id || categoryId === "table_all") {
+          item.classList.remove("hide");
         }
       });
-    }
 
-    // process
-    const total = Math.round((state.count.fin / l) * 100);
-    const progress = document.querySelector(".progress");
-    const inc = `
-      <ul class="progress-info">
-        <li>전체 : ${l}</li>
-        <li>${state.text.fin} : ${state.count.fin}</li>
-        <li>${state.text.mod} : ${state.count.mod}</li>
-        <li>${state.text.del} : ${state.count.del}</li>
-        <li>${state.text.wait} : ${state.count.wait}</li>
-        <li>${state.text.chk} : ${state.count.chk}</li>
-        <li>${state.text.ing} : ${state.count.ing}</li>
-      </ul>
-      <div class="progress-bar">
-        <div class="text">${total}%</div>  
-        <div class="bar">
-          <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${total}" style="width:${total}%"></span>
-        </div>  
-      </div>  
-    `;
-    progress.innerHTML = inc;
-  };
-
-  // tableCopy : 복사문법 변경 해야함 execCommand > window.navigator.clipboard.writeText(copyBox.textContent).then(() => { 내용 });
-  const tableCopy = () => {
-    // setToast : 공통으로 빼기
-    const setToast = function (target) {
-      const outland = document.querySelector("#outland");
-      const toast = `
-        <div class="toast">
-          <div class="inner">
-            <p class="text">
-              <span class="var">
-                "<em>${target}</em>"
-              </span>
-              <span>복사되었습니다.</span>
-            </p>
-          </div>
-        </div>
-      `;
-      outland.innerHTML = toast;
+      // 로딩 테스트
+      // loadDiv.classList.add("active");
+      // const promise = function () {
+      //   return new Promise((resolve, reject) => {
+      //     resolve(articleView());
+      //   });
+      // };
+      // const runResult = async () => {
+      //   console.log("loding");
+      //   await promise();
+      //   console.log("loding-end");
+      //   loadDiv.classList.remove("active");
+      // };
       // setTimeout(() => {
-      //   outland.innerHTML = "";
-      // }, 500);
-    };
-    
+      //   runResult();
+      // }, 0);
+      // 로딩 테스트
 
-    // 클립보드에 텍스트를 복사하는 함수
-    const copyTextToClipboard = async (el) => {
-      try {
-        // 대상 요소의 텍스트 내용을 클립보드에 복사 시도
-        await navigator.clipboard.writeText(el.textContent);
-
-        // 복사 성공 메시지와 복사된 내용을 콘솔에 출력
-        console.log("복사 완료");
-        console.log(el.textContent);
-
-        // 복사된 내용을 변수에 저장
-        const copyContent = el.textContent;
-
-        // 복사된 내용으로 토스트 팝업 호출 (setToast 함수가 정의되어 있어야 합니다)
-        setToast(copyContent);
-      } catch (error) {
-        // 복사 실패 메시지와 시도한 내용을 콘솔에 출력
-        console.log("복사 실패");
-        console.log(el.textContent);
-        
-        // 에러 메시지를 콘솔에 출력
-        console.error(error);
-      }
+      displayLoading();
+      setTimeout(hideLoading, 0);
     };
 
-    // 모든 .table td p 요소를 선택
-    const elements = document.querySelectorAll(".table td p");
+    categoryButtons.forEach((item) => {
+      item.addEventListener("click", filterByCategory);
+    });
+  }
 
-    // 각 요소에 클릭 이벤트 리스너를 추가
-    elements.forEach(function (item) {
-      item.addEventListener("click", function () {
-        // 클릭된 요소의 텍스트를 클립보드에 복사
-        copyTextToClipboard(item);
+  // initSelectFilter : 선택필터 초기화
+  const initSelectFilter = () => {
+    const selects = document.querySelectorAll(".filter select");
+    const input = document.querySelector(".filter input[type=text]");
+   
+    const filterBySelect = () => {
+      const keyword = input.value;  
+      dataClone = dataFilter(dataOrign, keyword);
+      // renderTable : 테이블을 dataClone으로 다시 그림
+      renderTable(dataClone);
+
+      // 로딩 테스트 --확인 후 삭제
+      // const runResult = async () => {
+      //   console.log("loding");
+      //   // await renderTable(dataClone);
+      //   console.log("loding-end");
+      //   loadDiv.classList.remove("active");
+      // };
+      // runResult();
+      // 로딩 테스트 --확인 후 삭제
+    };
+
+    // 선택 옵션 실행
+    selects.forEach((item) => {
+      item.addEventListener("change", function () {
+        const option = item.options[item.selectedIndex].value;
+        input.value = option;
+        filterBySelect();
       });
     });
 
+    // 검색 입력값 실행
+    input.addEventListener("keyup", () => {
+      filterBySelect();
+    });
+  }
 
-    // // async 타입
-    // const copyTextToClipboard2 = async (target) => {
-    //   try {
-    //     await navigator.clipboard.writeText(target.textContent);
-    //     // success();
-    //     console.log("복사완료");
-    //     console.log(target.textContent);
-    //     // toast 팝업 호출
-    //     const copyContent = target.textContent;
-    //     setToast(copyContent);
-    //   } catch {
-    //     // fail();
-    //     console.log("복사실패");
-    //     console.log(target.textContent);
-    //   }
-    // }
+  // updateTableIndex : 전체개수
+  const updateTableIndex = () => {
+    const cells = document.querySelectorAll(".table td.index > p");
+    const counter = document.querySelector(".counter");
+    const length = cells.length;
 
-    // const el = document.querySelectorAll(".table td p");
+    // 전체 글 개수
+    if(counter) {
+      counter.innerHTML = `총 ${length} 개`;
+    }
 
-    // if (el) {
-    //   el.forEach(function (item) {
-    //     item.addEventListener("click", function () {
-    //       // then copy
-    //       // window.navigator.clipboard.writeText(item.textContent).then(() => {
-    //       //   console.log(item.textContent);
-    //       // });
-    //       copyTextToClipboard2(item);
-    //     });
-    //   });
-    // }
+    // 글번호
+    cells.forEach((cell, index) => {
+      const number = index + 1;
+      cell.textContent = number
+    });
+  };
+
+  // updateTableProgress : 진행상태 개수
+  const updateTableProgress = () => {
+    const rows = document.querySelectorAll(".table tbody tr[data-state]");
+    const totalRows = rows.length;
+    const states = { 
+      fin: st.fin,
+      mod: st.mod,
+      del: st.del,
+      wtn: st.wtn,
+      chk: st.chk,
+      ing: st.ing,
+    };
+    const stateCounts = {
+      fin: 0,
+      mod: 0,
+      del: 0,
+      wtn: 0,
+      chk: 0,
+      ing: 0,
+    };
+
+    // 상태별로 클래스를 추가하고 개수를 증가시키는 함수
+    rows.forEach((item) => {
+      const stateText = item.dataset.state;
+      console.log(item.querySelector(".state p").textContent);
+      if (stateText === states.fin) {
+        item.classList.add("fin");
+        stateCounts.fin++;
+      } else if (stateText === states.mod) {
+        item.classList.add("mod");
+        stateCounts.mod++;
+      } else if (stateText === states.del) {
+        item.classList.add("del");
+        stateCounts.del++;
+      } else if (stateText === states.wtn || stateText.trim() === "") {
+        item.classList.add("wtn");
+        stateCounts.wtn++;
+      } else if (stateText === states.chk) {
+        item.classList.add("chk");
+        stateCounts.chk++;
+      } else if (stateText === states.ing) {
+        item.classList.add("ing");
+        stateCounts.ing++;
+      }
+    });
+
+    // 진행상태 퍼센트 계산
+    const totalPercentage = totalRows > 0 ? Math.round((stateCounts.fin / totalRows) * 100) : 0;
+    const progress = document.querySelector(".progress");
+    const progressHTML = `
+      <ul class="progress-info">
+        <li>전체 : ${totalRows}</li>
+        <li>${states.fin} : ${stateCounts.fin}</li>
+        <li>${states.mod} : ${stateCounts.mod}</li>
+        <li>${states.del} : ${stateCounts.del}</li>
+        <li>${states.wtn} : ${stateCounts.wtn}</li>
+        <li>${states.chk} : ${stateCounts.chk}</li>
+        <li>${states.ing} : ${stateCounts.ing}</li>
+      </ul>
+      <div class="progress-bar">
+        <div class="text">${totalPercentage}%</div>  
+        <div class="bar">
+          <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${totalPercentage}" style="width:${totalPercentage}%"></span>
+        </div>  
+      </div>  
+    `;
+    progress.innerHTML = progressHTML;
   };
 
   // noteToggle
@@ -490,7 +354,7 @@ let dataSort = [];
       console.log("noteToggleEvt!!!!! --- loading");
       const note = document.querySelectorAll(".table td.note");
       if (note) {
-        note.forEach(function (item) {
+        note.forEach((item) => {
           const memo = item.querySelectorAll(".note-memo p");
           const btn = item.querySelector(".btn");
           if (memo.length > 1) {
@@ -526,52 +390,201 @@ let dataSort = [];
     });
   };
 
-  // dataInit
-  dataInit(dataSet, dataOrign);
+  // copyTableContent : 테이블 내용을 복사하는 함수
+  const copyTableContent = () => {
+    // 클립보드에 텍스트를 복사하는 함수
+    const copyTextToClipboard = async (el) => {
+      try {
+        // 대상 요소의 텍스트 내용을 클립보드에 복사 시도
+        await navigator.clipboard.writeText(el.textContent);
 
-  // tableInit
-  tableInit();
-  tableView(dataOrign);
+        // 복사 성공 메시지와 복사된 내용을 콘솔에 출력
+        console.log("복사 완료");
+        console.log(el.textContent);
 
-  // filterInit
-  filterInit();
+        // 복사된 내용을 변수에 저장
+        const copyContent = el.textContent;
 
-  // utils
-  tableIndex();
-  tableState();
-  tableCopy();
-  noteToggle();
-  tableCheck();
+        // 복사된 내용으로 토스트 팝업 호출 (setToast 함수가 정의되어 있어야 합니다)
+        setToast(copyContent);
+      } catch (error) {
+        // 복사 실패 메시지와 시도한 내용을 콘솔에 출력
+        console.log("복사 실패");
+        console.log(el.textContent);
+
+        // 에러 메시지를 콘솔에 출력
+        console.error(error);
+      }
+    };
+
+    // 모든 .table td p 요소를 선택
+    const elements = document.querySelectorAll(".table td p");
+
+    // 각 요소에 클릭 이벤트 리스너를 추가
+    elements.forEach((item) => {
+      item.addEventListener("click", function () {
+        // 클릭된 요소의 텍스트를 클립보드에 복사
+        copyTextToClipboard(item);
+      });
+    });
+  };
 
 
+  // 내부함수
+  // dataFilter : renderTable, selectFilter 사용
+  const dataFilter = (data, query) => {
+    return data.filter((i) => i.toLowerCase().indexOf(query.toLowerCase()) > -1);
+  };
+  
+  // setToast : 토스트 메시지를 표시하는 함수
+  const setToast = (target) => {
+    const outland = document.querySelector("#outland");
+    const toast = `
+      <div class="toast">
+        <div class="inner">
+          <p class="text">
+            <span class="var">
+              "<em>${target}</em>"
+            </span>
+            <span>복사되었습니다.</span>
+          </p>
+        </div>
+      </div>
+    `;
+    outland.innerHTML = toast;
+    setTimeout(() => {
+      outland.innerHTML = "";
+    }, 500);
+  };
+
+  // 로딩 표시
+  const displayLoading = () => {
+    loadDiv.classList.add("active");
+  };
+
+  // 로딩 숨김
+  const hideLoading = () => {
+    loadDiv.classList.remove("active");
+  };
 
 
+  // 외부에서 접근할 수 있는 함수
+  const publicFunction = () => {
+    console.log("Public function called");
+    // initData
+    initData(dataArray, dataOrign);
 
+    // initTable
+    initTable();
+    renderTable(dataOrign);
 
+    // initFilter
+    initFilter();
 
-  // 테이블세팅 자동화 data_option 변수 처리
-  // 정렬
-  // json 로컬 저장
-  // 인클루드
-  // 다크모드
-  // 로딩
-  // ia 디자인
-  // core
-  // 코드정리 init, 실행부 분리
-  // 접근성 분리
-  // 제이슨 방식
+    // utils
+    updateTableIndex();
+    updateTableProgress();
+    noteToggle();
+    tableCheck();
 
-  // 팝업 1.딤체크 / 2.딤에따른 분기 / 3.팝업의 현재 z-index / 4.팝업종류
+    // 테이블 내용을 복사하는 함수
+    copyTableContent();
+  };
 
-  // 검색속도 개선
-
-  // async function f() {
-  //   return Promise.resolve(1);
-  // }
-
-  // f().then(alert); // 1
+  // 외부로 노출될 함수나 변수를 반환
+  return {
+    publicFunction: publicFunction
+  };
 })();
 // e : function
+
+
+// 모듈에서 publicFunction 호출
+core.publicFunction();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 모듈 실헹방식 테스트
+const myModule = (function () {
+  // 내부에서 사용
+  let value = "value";
+  const getValue = (text) => {
+    value = text
+  };
+
+  // 외부함수
+  const setValue = () => {
+    getValue("test!!!");
+    console.log(value);
+  };
+
+
+  const publicFunction = () => {
+    // 외부에서 접근할 수 있는 함수
+    console.log("Public function called");
+    setValue();
+  };
+
+  // 외부로 노출될 함수나 변수를 반환
+  return {
+    publicFunction: publicFunction
+  };
+})();
+// 모듈에서 publicFunction 호출
+myModule.publicFunction();
+
+
+
+// 테스트2
+const myModule2 = (function () {
+  let counter = 0;
+
+  const incrementCounter = () => {
+    counter++;
+  };
+
+  const resetCounter = () => {
+    counter = 0;
+  };
+
+  const getCounterValue = () => {
+    return counter;
+  };
+
+  const incrementAndLogCounter = () => {
+    incrementCounter();
+    console.log(`Counter incremented to ${counter}`);
+  };
+
+  const publicFunction = () => {
+    incrementAndLogCounter();
+  };
+
+  return {
+    publicFunction: publicFunction,
+    getCounterValue: getCounterValue
+  };
+})();
+
+myModule2.publicFunction(); // Counter incremented to 1
+myModule2.publicFunction(); // Counter incremented to 2
+
+// console.log(myModule2.getCounterValue()); // 2
+
+
 
 // 숨김처리
 // // 로딩 시간 체크
