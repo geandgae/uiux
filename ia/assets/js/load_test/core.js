@@ -36,6 +36,8 @@ const core = (() => {
   // initData : dataArray의 데이터를 테이블 형식으로 변환해서 dataOrign 배열에 저장
   const initData = (data, out) => {
     data.forEach((item) => {
+      const hasMultipleNotes = item.note.match(/<p>/g).length > 1;
+      const multiClass = hasMultipleNotes ? "multi" : "";
       const tableRow = `
         <tr data-id="${item.id}">
           <td class="index"><p></p></td>
@@ -49,7 +51,7 @@ const core = (() => {
           <td class="date"><p>${item.date}</p></td>
           <td class="state"><p>${item.state.trim() === "" ? "대기" : item.state}</p></td>
           <td class="author"><p>${item.author}</p></td>
-          <td class="note" data-wacc-toggle="true">
+          <td class="note ${multiClass}" data-wacc-toggle="true">
             <button type="button" class="btn" title="더보기"><i></i></button>
             <div class="note-memo target">${item.note}</div>
           </td>
@@ -104,18 +106,18 @@ const core = (() => {
   };
 
   // renderTable : initTable에서 생성한 article에 dataOrign을 뿌림(테이블 실제 데이터 생성)
-  // const renderTable = (data) => {
-  //   const article = document.querySelectorAll(".article");
-  //   article.forEach((item) => {
-  //     const id = item.getAttribute("id");
-  //     const tableBody = item.querySelector("tbody");
-  //     const filteredData = filterData(data, id);
-  //     tableBody.innerHTML = filteredData.join("");
-  //   });
-  // };
+  const renderTable = (data) => {
+    const article = document.querySelectorAll(".article");
+    article.forEach((item) => {
+      const id = item.getAttribute("id");
+      const tableBody = item.querySelector("tbody");
+      const filteredData = filterData(data, id);
+      tableBody.innerHTML = filteredData.join("");
+    });
+  };
 
   // renderTable 함수 업데이트
-  const renderTable = async (data) => {
+  const renderTableUpd = async (data) => {
     displayLoading();
     const article = document.querySelectorAll(".article");
     await new Promise((resolve) => setTimeout(resolve, 0)); // 비동기 처리를 위해 setTimeout 사용
@@ -174,56 +176,56 @@ const core = (() => {
     }
   };
 
-  // // initCategoryFilter : 카테고리 필터 초기화
-  // const initCategoryFilter = () => {
-  //   const categoryButtons = document.querySelectorAll(".category .btn");
-  //   const articles = document.querySelectorAll(".article");
+  // initCategoryFilter : 카테고리 필터 초기화
+  const initCategoryFilter = () => {
+    const categoryButtons = document.querySelectorAll(".category .btn");
+    const articles = document.querySelectorAll(".article");
 
-  //   const filterByCategory = (event) => {
-  //     const categoryId = event.currentTarget.id;
+    const filterByCategory = (event) => {
+      const categoryId = event.currentTarget.id;
 
-  //     articles.forEach((item) => {
-  //       item.classList.add("hide");
-  //       if (categoryId === item.id || categoryId === "table_all") {
-  //         item.classList.remove("hide");
-  //       }
-  //     });
-  //   };
+      articles.forEach((item) => {
+        item.classList.add("hide");
+        if (categoryId === item.id || categoryId === "table_all") {
+          item.classList.remove("hide");
+        }
+      });
+    };
 
-  //   categoryButtons.forEach((item) => {
-  //     item.addEventListener("click", filterByCategory);
-  //   });
-  // };
+    categoryButtons.forEach((item) => {
+      item.addEventListener("click", filterByCategory);
+    });
+  };
 
-  // // initSelectFilter : 선택필터 초기화
-  // const initSelectFilter = () => {
-  //   const selects = document.querySelectorAll(".filter select");
-  //   const input = document.querySelector(".filter input[type=text]");
+  // initSelectFilter : 선택필터 초기화
+  const initSelectFilter = () => {
+    const selects = document.querySelectorAll(".filter select");
+    const input = document.querySelector(".filter input[type=text]");
 
-  //   const filterBySelect = () => {
-  //     const keyword = input.value;
-  //     dataClone = filterData(dataOrign, keyword);
-  //     // renderTable : 테이블을 dataClone으로 다시 그림
-  //     renderTable(dataClone);
-  //   };
+    const filterBySelect = () => {
+      const keyword = input.value;
+      dataClone = filterData(dataOrign, keyword);
+      // renderTable : 테이블을 dataClone으로 다시 그림
+      renderTable(dataClone);
+    };
 
-  //   // 선택 옵션 실행
-  //   selects.forEach((item) => {
-  //     item.addEventListener("change", function () {
-  //       const option = item.options[item.selectedIndex].value;
-  //       input.value = option;
-  //       filterBySelect();
-  //     });
-  //   });
+    // 선택 옵션 실행
+    selects.forEach((item) => {
+      item.addEventListener("change", function () {
+        const option = item.options[item.selectedIndex].value;
+        input.value = option;
+        filterBySelect();
+      });
+    });
 
-  //   // 검색 입력값 실행
-  //   input.addEventListener("keyup", () => {
-  //     filterBySelect();
-  //   });
-  // };
+    // 검색 입력값 실행
+    input.addEventListener("keyup", () => {
+      filterBySelect();
+    });
+  };
 
   // initCategoryFilter 함수 업데이트
-  const initCategoryFilter = () => {
+  const initCategoryFilterUpd = () => {
     const categoryButtons = document.querySelectorAll(".category .btn");
     const articles = document.querySelectorAll(".article");
 
@@ -249,7 +251,7 @@ const core = (() => {
   };
 
   // initSelectFilter 함수 업데이트
-  const initSelectFilter = () => {
+  const initSelectFilterUpd = () => {
     const selects = document.querySelectorAll(".filter select");
     const input = document.querySelector(".filter input[type=text]");
 
@@ -400,7 +402,6 @@ const core = (() => {
     });
   };
 
-
   // toggleNoteExpansion : 노트 토글 기능
   const toggleNoteExpansion = () => {
     // const toggleEvent = (elements) => {
@@ -418,29 +419,69 @@ const core = (() => {
     //   }
     // });
 
-
     // 테스트중 : 데이터가 많을때 toggleNoteExpansion 이벤트 동작이 너무 느린데 해결방법이 있을까?
-    const evt = function(e) {
-      console.log("noteToggleEvt!!!!! --- evt");
-      e.currentTarget.closest(".note").classList.toggle("active");
-      e.currentTarget.classList.toggle("active");
+    // const evt = function(e) {
+    //   console.log("noteToggleEvt!!!!! --- evt");
+    //   e.currentTarget.closest(".note").classList.toggle("active");
+    //   e.currentTarget.classList.toggle("active");
+    // };
+
+    // const noteToggleEvt = function() {
+    //   console.log("noteToggleEvt!!!!! --- loading");
+    //   let note = document.querySelectorAll(".table td.note");
+    //   if (note) {
+    //     note.forEach(function (item) {
+    //       let memo = item.querySelectorAll(".note-memo p");
+    //       let btn = item.querySelector(".btn");
+    //       if (memo.length > 1) {
+    //         item.closest(".note").classList.add("multi");
+    //         btn.addEventListener("click", evt);
+    //       }
+    //     });
+    //   }
+    // };
+    // noteToggleEvt();
+
+    const multi = document.querySelectorAll(".note.multi");
+
+    multi.forEach((item) => {
+      item.addEventListener("click", () => {
+        item.classList.toggle("active");
+      });
+    });
+
+    const tables = document.querySelectorAll(".table");
+
+    const toggleEvent = (button) => {
+      const note = button.closest(".note");
+      note.classList.toggle("active");
+      button.classList.toggle("active");
     };
-    
-    const noteToggleEvt = function() {
-      console.log("noteToggleEvt!!!!! --- loading");
-      let note = document.querySelectorAll(".table td.note");
-      if (note) {
-        note.forEach(function (item) {
-          let memo = item.querySelectorAll(".note-memo p");
-          let btn = item.querySelector(".btn");
-          if (memo.length > 1) {
-            item.closest(".note").classList.add("multi");
-            btn.addEventListener("click", evt);
+
+    const handleIntersection = (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const button = entry.target.querySelector(".btn");
+          if (button) {
+            button.addEventListener("click", () => toggleEvent(button));
           }
-        });
-      }
+          observer.unobserve(entry.target);
+        }
+      });
     };
-    noteToggleEvt();
+
+    const observer = new IntersectionObserver(handleIntersection, {
+      root: null, // Use the viewport as the root
+      rootMargin: "0px",
+      threshold: 0.1, // Trigger when at least 10% of the element is visible
+    });
+
+    tables.forEach((table) => {
+      const noteCells = table.querySelectorAll(".note.multi");
+      noteCells.forEach((noteCell) => {
+        observer.observe(noteCell);
+      });
+    });
   };
 
   // toggleRowSelection
@@ -492,9 +533,8 @@ const core = (() => {
     loadDiv.classList.remove("active");
   };
 
-
   // publicFunction 함수 업데이트
-  const publicFunction = async () => {
+  const publicFunctionUpd = async () => {
     displayLoading();
     initData(dataArray, dataOrign);
     hideLoading();
@@ -509,20 +549,20 @@ const core = (() => {
     copyTableContent();
   };
 
-  // const publicFunction = () => {
-  //   console.log("Public function called");
-  //   initData(dataArray, dataOrign);
-  //   initTable();
-  //   renderTable(dataOrign);
+  const publicFunction = () => {
+    console.log("Public function called");
+    initData(dataArray, dataOrign);
+    initTable();
+    renderTable(dataOrign);
 
-  //   // utils
-  //   initFilter();
-  //   updateTableIndex();
-  //   updateTableProgress();
-  //   toggleNoteExpansion();
-  //   toggleRowSelection();
-  //   copyTableContent();
-  // };
+    // utils
+    initFilter();
+    updateTableIndex();
+    updateTableProgress();
+    toggleNoteExpansion();
+    toggleRowSelection();
+    copyTableContent();
+  };
 
   return {
     publicFunction: publicFunction,
