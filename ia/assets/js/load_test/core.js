@@ -44,7 +44,7 @@ const core = (function () {
   const initData = (data, out) => {
     data.forEach((item) => {
       const tableRow = `
-        <tr data-sort="${item.date}" data-id="${item.id}" data-author="${item.author}" data-state="${item.state.trim() === "" ? "대기" : item.state}">
+        <tr data-id="${item.id}">
           <td class="index"><p></p></td>
           <td class="depth1"><p>${item.depth1}</p></td>
           <td class="depth2"><p>${item.depth2}</p></td>
@@ -127,7 +127,6 @@ const core = (function () {
       // 로딩 테스트
     });
   };
-
 
 
   // utils
@@ -275,7 +274,7 @@ const core = (function () {
 
   // updateTableProgress : 진행상태 개수
   const updateTableProgress = () => {
-    const rows = document.querySelectorAll(".table tbody tr[data-state]");
+    const rows = document.querySelectorAll(".table tbody tr .state p");
     const totalRows = rows.length;
     const states = { 
       fin: st.fin,
@@ -296,8 +295,7 @@ const core = (function () {
 
     // 상태별로 클래스를 추가하고 개수를 증가시키는 함수
     rows.forEach((item) => {
-      const stateText = item.dataset.state;
-      console.log(item.querySelector(".state p").textContent);
+      const stateText = item.textContent;
       if (stateText === states.fin) {
         item.classList.add("fin");
         stateCounts.fin++;
@@ -342,54 +340,6 @@ const core = (function () {
     progress.innerHTML = progressHTML;
   };
 
-  // noteToggle
-  const noteToggle = () => {
-    const evt = function (e) {
-      console.log("noteToggleEvt!!!!! --- evt");
-      e.currentTarget.closest(".note").classList.toggle("active");
-      e.currentTarget.classList.toggle("active");
-    };
-
-    const noteToggleEvt = function () {
-      console.log("noteToggleEvt!!!!! --- loading");
-      const note = document.querySelectorAll(".table td.note");
-      if (note) {
-        note.forEach((item) => {
-          const memo = item.querySelectorAll(".note-memo p");
-          const btn = item.querySelector(".btn");
-          if (memo.length > 1) {
-            item.closest(".note").classList.add("multi");
-            btn.addEventListener("click", evt);
-          }
-        });
-      }
-    };
-
-    noteToggleEvt();
-  };
-
-  // tableCheck
-  const tableCheck = () => {
-    const evt = (e) => {
-      // console.log(e.currentTarget);
-      e.currentTarget.classList.toggle("select");
-    };
-    function tableCheckEvt() {
-      const el = document.querySelectorAll(".table tbody tr");
-      if (el) {
-        el.forEach((item) => {
-          item.addEventListener("click", evt);
-        });
-      }
-    }
-    // 이벤트를 두번 실행하는 이유 첫 동작시 실행 안됨 원인 찾아서 해결
-    tableCheckEvt();
-
-    document.addEventListener("click", () => {
-      tableCheckEvt();
-    });
-  };
-
   // copyTableContent : 테이블 내용을 복사하는 함수
   const copyTableContent = () => {
     // 클립보드에 텍스트를 복사하는 함수
@@ -428,6 +378,40 @@ const core = (function () {
       });
     });
   };
+
+  // toggleNoteExpansion : 노트 토글 기능
+  const toggleNoteExpansion = () => {
+    const toggleEvent = (elements) => {
+      elements.closest(".note").classList.toggle("active");
+      elements.classList.toggle("active");
+    };
+
+    const noteElements = document.querySelectorAll(".table td.note");
+    noteElements.forEach((item) => {
+      const memos = item.querySelectorAll(".note-memo p");
+      const toggleButton = item.querySelector(".btn");
+      if (memos.length > 1) {
+        item.closest(".note").classList.add("multi");
+        toggleButton.addEventListener("click", () => toggleEvent(toggleButton));
+      }
+    });
+  };
+
+  // toggleTableRowSelection
+  const toggleTableRowSelection = () => {
+    const toggleSelection = (element) => {
+      element.classList.toggle("select");
+    };
+
+    const tableRows = document.querySelectorAll(".table tbody tr");
+    tableRows.forEach((item) => {
+      item.addEventListener("click", () => {
+        toggleSelection(item);
+      });
+    });
+  };
+
+  
 
 
   // 내부함수
@@ -484,10 +468,8 @@ const core = (function () {
     // utils
     updateTableIndex();
     updateTableProgress();
-    noteToggle();
-    tableCheck();
-
-    // 테이블 내용을 복사하는 함수
+    toggleNoteExpansion();
+    toggleTableRowSelection();
     copyTableContent();
   };
 

@@ -28,6 +28,56 @@
       .hide {
         display: none !important;
       }
+      .table td.note .btn {
+        border: 1px solid #1a1a1a;
+        width: 1.6rem;
+        height: 1.6rem;
+        align-items: center;
+        justify-content: center;
+        display: none;
+      }
+      .table td.note .btn i {
+        width: 0.7rem;
+        height: 0.7rem;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .table td.note .btn i::before,
+      .table td.note .btn i::after {
+        content: "";
+        display: block;
+        background-color: #1a1a1a;
+      }
+      .table td.note .btn i::before {
+        width: 100%;
+        height: 1px;
+      }
+      .table td.note .btn i::after {
+        width: 1px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0.3rem;
+        transition: all 0.3s;
+      }
+      .table td.note.active .btn i::after {
+        opacity: 0;
+        transform: rotate(90deg);
+      }
+      .table td.note.multi .btn {
+        display: flex;
+      }
+      .table td.note.multi .note-memo p:not(:last-child) {
+        display: none;
+      }
+      .table td.note.multi.active .note-memo p {
+        display: block;
+      }
+      .table .select {
+        background-color: rgb(231, 231, 231);
+      }
     </style>
 
     <!-- loading -->
@@ -43,32 +93,26 @@
           <!-- filter -->
           <div class="filter">
             <!-- type_author -->
-            <select name="author">
-            </select>
+            <select name="author"></select>
             <!-- //type_author -->
             <!-- type_state -->
-            <select name="state">
-            </select>
+            <select name="state"></select>
             <!-- //type_state -->
             <!-- search -->
             <fieldset class="search">
               <legend>search fieldset</legend>
               <label for="table_search">검색</label>
-              <input type="text" id="table_search">
+              <input type="text" id="table_search" />
               <!-- <button type="button" class="btn">버튼</button> -->
             </fieldset>
             <!-- //search -->
           </div>
           <!-- //filter -->
           <!-- counter -->
-          <div class="counter">
-            counter
-          </div>
+          <div class="counter">counter</div>
           <!-- //counter -->
           <!-- progress -->
-          <div class="progress">
-            progress
-          </div>
+          <div class="progress">progress</div>
           <!-- //progress -->
         </div>
         <!-- //hta -->
@@ -80,28 +124,20 @@
         <!-- gnb -->
         <section class="gnb">
           <!-- category -->
-          <ul class="category">
-          </ul>
+          <ul class="category"></ul>
           <!-- //category -->
         </section>
         <!-- //gnb -->
         <!-- contents : data view -->
-        <section class="contents">
-        </section>
+        <section class="contents"></section>
         <!-- //contents : data view  -->
       </main>
       <!-- //container -->
-
-
-
-
     </div>
     <!-- //wrap -->
-    
-    <!-- outland : toast -->
-    <div id="outland">  
-    </div>
-    <!-- //outland : toast -->
 
+    <!-- outland : toast -->
+    <div id="outland"></div>
+    <!-- //outland : toast -->
   </body>
 </html>
