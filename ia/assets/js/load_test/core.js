@@ -1,10 +1,9 @@
 "use strict";
 
-// import
+// Import
 import { at, st, ctg } from "./data_options.js";
 import { dataArray } from "./data_set.js";
 // arraySet 사용안함 확인 후 삭제
-
 
 // 테이블세팅 자동화 data_option 변수 처리
 // 정렬
@@ -27,17 +26,11 @@ import { dataArray } from "./data_set.js";
 // 상태값 : 진행/ing   보류/삭제/del     대기/검수/wait/chk     완료/수정/fin
 // 로딩테스트 주석은 비동기처리 / 공통함수로 일괄 처리
 
-
-
-// s : function
-const core = (function () {
-
-  // init 전역변수 선언
-  // 로딩영역
+// Core module
+const core = (() => {
+  // Global variables
   const loadDiv = document.querySelector(".loading");
-  // dataOrign : dataArray(data파일모음)을 기반으로 변환된 테이블 저장 배열
   const dataOrign = [];
-  // dataClone : 필터에서 사용.
   let dataClone = [];
 
   // initData : dataArray의 데이터를 테이블 형식으로 변환해서 dataOrign 배열에 저장
@@ -71,8 +64,8 @@ const core = (function () {
     const container = document.querySelector(".contents");
     // const articles = ctg.map(category => {}) 배열형태
     // 객체를 배열로 전환
-    const articles = Object.values(ctg).map(category => {
-      const {id, title} = category;
+    const articles = Object.values(ctg).map((category) => {
+      const { id, title } = category;
       return `
         <!-- article -->
         <article class="article" id="${id}">
@@ -105,7 +98,7 @@ const core = (function () {
           <!-- //table -->
         </article>
         <!-- //article -->
-      `
+      `;
     });
     container.innerHTML = articles.join("");
   };
@@ -116,7 +109,7 @@ const core = (function () {
     article.forEach((item) => {
       const id = item.getAttribute("id");
       const tableBody = item.querySelector("tbody");
-      const filteredData = dataFilter(data, id);
+      const filteredData = filterData(data, id);
       tableBody.innerHTML = filteredData.join("");
 
       // 로딩 테스트
@@ -128,7 +121,6 @@ const core = (function () {
     });
   };
 
-
   // utils
   // initFilter : 필터 옵션 실행
   const initFilter = () => {
@@ -137,7 +129,7 @@ const core = (function () {
     initCategoryButtons();
     initCategoryFilter();
     initSelectFilter();
-  }
+  };
 
   // initAuthorOptions : 작성자 옵션 초기화
   const initAuthorOptions = () => {
@@ -147,7 +139,7 @@ const core = (function () {
       authorOptions.push(`<option value="${at[item]}">${at[item]}</option>`);
     }
     authorSelect.innerHTML = authorOptions.join("");
-  }
+  };
 
   // initStateOptions : 상태값 옵션 초기화
   const initStateOptions = () => {
@@ -159,7 +151,7 @@ const core = (function () {
       `);
     }
     stateSelect.innerHTML = StateOptions.join("");
-  }
+  };
 
   // initCategoryButtons : 카테고리 버튼 초기화 : 카테고리 버튼 생성 삭제할 수도있음
   const initCategoryButtons = () => {
@@ -170,10 +162,10 @@ const core = (function () {
       const title = ctg[item].title;
       categorybuttons.push(`<li><button type="button" class="btn" id="${id}">${title}</button></li>`);
     }
-    if(categoryContainer) {
+    if (categoryContainer) {
       categoryContainer.innerHTML = categorybuttons.join("");
     }
-  }
+  };
 
   // initCategoryFilter : 카테고리 필터 초기화
   const initCategoryFilter = () => {
@@ -215,16 +207,16 @@ const core = (function () {
     categoryButtons.forEach((item) => {
       item.addEventListener("click", filterByCategory);
     });
-  }
+  };
 
   // initSelectFilter : 선택필터 초기화
   const initSelectFilter = () => {
     const selects = document.querySelectorAll(".filter select");
     const input = document.querySelector(".filter input[type=text]");
-   
+
     const filterBySelect = () => {
-      const keyword = input.value;  
-      dataClone = dataFilter(dataOrign, keyword);
+      const keyword = input.value;
+      dataClone = filterData(dataOrign, keyword);
       // renderTable : 테이블을 dataClone으로 다시 그림
       renderTable(dataClone);
 
@@ -252,7 +244,7 @@ const core = (function () {
     input.addEventListener("keyup", () => {
       filterBySelect();
     });
-  }
+  };
 
   // updateTableIndex : 전체개수
   const updateTableIndex = () => {
@@ -261,14 +253,14 @@ const core = (function () {
     const length = cells.length;
 
     // 전체 글 개수
-    if(counter) {
+    if (counter) {
       counter.innerHTML = `총 ${length} 개`;
     }
 
     // 글번호
-    cells.forEach((cell, index) => {
+    cells.forEach((item, index) => {
       const number = index + 1;
-      cell.textContent = number
+      item.textContent = number;
     });
   };
 
@@ -276,7 +268,7 @@ const core = (function () {
   const updateTableProgress = () => {
     const rows = document.querySelectorAll(".table tbody tr .state p");
     const totalRows = rows.length;
-    const states = { 
+    const states = {
       fin: st.fin,
       mod: st.mod,
       del: st.del,
@@ -343,24 +335,24 @@ const core = (function () {
   // copyTableContent : 테이블 내용을 복사하는 함수
   const copyTableContent = () => {
     // 클립보드에 텍스트를 복사하는 함수
-    const copyTextToClipboard = async (el) => {
+    const copyTextToClipboard = async (element) => {
       try {
         // 대상 요소의 텍스트 내용을 클립보드에 복사 시도
-        await navigator.clipboard.writeText(el.textContent);
+        await navigator.clipboard.writeText(element.textContent);
 
         // 복사 성공 메시지와 복사된 내용을 콘솔에 출력
         console.log("복사 완료");
-        console.log(el.textContent);
+        console.log(element.textContent);
 
         // 복사된 내용을 변수에 저장
-        const copyContent = el.textContent;
+        const copyContent = element.textContent;
 
         // 복사된 내용으로 토스트 팝업 호출 (setToast 함수가 정의되어 있어야 합니다)
         setToast(copyContent);
       } catch (error) {
         // 복사 실패 메시지와 시도한 내용을 콘솔에 출력
         console.log("복사 실패");
-        console.log(el.textContent);
+        console.log(element.textContent);
 
         // 에러 메시지를 콘솔에 출력
         console.error(error);
@@ -397,8 +389,8 @@ const core = (function () {
     });
   };
 
-  // toggleTableRowSelection
-  const toggleTableRowSelection = () => {
+  // toggleRowSelection
+  const toggleRowSelection = () => {
     const toggleSelection = (element) => {
       element.classList.toggle("select");
     };
@@ -411,15 +403,12 @@ const core = (function () {
     });
   };
 
-  
-
-
   // 내부함수
-  // dataFilter : renderTable, selectFilter 사용
-  const dataFilter = (data, query) => {
+  // filterData : renderTable, selectFilter 사용
+  const filterData = (data, query) => {
     return data.filter((i) => i.toLowerCase().indexOf(query.toLowerCase()) > -1);
   };
-  
+
   // setToast : 토스트 메시지를 표시하는 함수
   const setToast = (target) => {
     const outland = document.querySelector("#outland");
@@ -427,9 +416,7 @@ const core = (function () {
       <div class="toast">
         <div class="inner">
           <p class="text">
-            <span class="var">
-              "<em>${target}</em>"
-            </span>
+            <span class="var">"<em>${target}</em>"</span>
             <span>복사되었습니다.</span>
           </p>
         </div>
@@ -441,132 +428,116 @@ const core = (function () {
     }, 500);
   };
 
-  // 로딩 표시
-  const displayLoading = () => {
-    loadDiv.classList.add("active");
-  };
+  // // 로딩 표시
+  // const displayLoading = () => {
+  //   loadDiv.classList.add("active");
+  // };
 
-  // 로딩 숨김
-  const hideLoading = () => {
-    loadDiv.classList.remove("active");
-  };
+  // // 로딩 숨김
+  // const hideLoading = () => {
+  //   loadDiv.classList.remove("active");
+  // };
 
-
-  // 외부에서 접근할 수 있는 함수
   const publicFunction = () => {
     console.log("Public function called");
-    // initData
-    initData(dataArray, dataOrign);
 
-    // initTable
+    initData(dataArray, dataOrign);
     initTable();
     renderTable(dataOrign);
 
-    // initFilter
-    initFilter();
-
     // utils
+    initFilter();
     updateTableIndex();
     updateTableProgress();
     toggleNoteExpansion();
-    toggleTableRowSelection();
+    toggleRowSelection();
     copyTableContent();
   };
 
-  // 외부로 노출될 함수나 변수를 반환
-  return {
-    publicFunction: publicFunction
-  };
-})();
-// e : function
 
+  // loading
+  // 로딩 화면 표시 상태 변수
+  let isLoading = false;
 
-// 모듈에서 publicFunction 호출
-core.publicFunction();
+  // 데이터를 비동기적으로 불러오고 로딩 화면을 표시하는 함수
+  const fetchData = async () => {
+    try {
+      // 데이터를 불러오는 중임을 사용자에게 알리기 위해 로딩 화면을 표시합니다.
+      displayLoading();
 
+      // 실제로 데이터를 비동기적으로 불러오는 로직을 작성합니다.
+      const response = await fetch("./assets/js/load_test/data_00.json");
+      const data = await response.json();
 
+      // 데이터를 성공적으로 불러온 후 로딩 화면을 숨깁니다.
+      hideLoading();
 
+      // 불러온 데이터를 반환합니다.
+      return data;
+    } catch (error) {
+      // 데이터 불러오기 중 오류가 발생한 경우 오류를 콘솔에 기록합니다.
+      console.error("데이터를 불러오는 중 오류가 발생했습니다:", error);
 
+      // 로딩 화면을 숨깁니다.
+      hideLoading();
 
-
-
-
-
-
-
-
-
-
-
-
-// 모듈 실헹방식 테스트
-const myModule = (function () {
-  // 내부에서 사용
-  let value = "value";
-  const getValue = (text) => {
-    value = text
+      // 오류 발생 시에는 null을 반환합니다.
+      return null;
+    }
   };
 
-  // 외부함수
-  const setValue = () => {
-    getValue("test!!!");
-    console.log(value);
+  // 로딩 화면을 표시하는 함수
+  const displayLoading = () => {
+    // 이미 로딩 중인 경우 중복으로 로딩 화면을 표시하지 않도록 합니다.
+    if (isLoading) {
+      return;
+    }
+
+    // 로딩 화면을 보여주는 UI 작업을 수행합니다.
+    // 예를 들어, 화면의 특정 위치에 로딩 스피너를 추가하는 코드를 작성합니다.
+    const loadingSpinner = document.createElement("div");
+    loadingSpinner.classList.add("loading-spinner");
+    // 로딩 스피너를 보여주는 UI 작업을 수행합니다.
+    // 예를 들어, 어딘가에 loadingSpinner를 추가하거나, loadingSpinner를 화면에 표시합니다.
+
+    // 로딩 상태를 true로 설정합니다.
+    isLoading = true;
+  };
+
+  // 로딩 화면을 숨기는 함수
+  const hideLoading = () => {
+    // 로딩 화면을 숨기는 UI 작업을 수행합니다.
+    // 예를 들어, 화면에서 로딩 스피너를 제거하는 코드를 작성합니다.
+    const loadingSpinner = document.querySelector(".loading-spinner");
+    if (loadingSpinner) {
+      loadingSpinner.remove();
+    }
+
+    // 로딩 상태를 false로 설정합니다.
+    isLoading = false;
   };
 
 
-  const publicFunction = () => {
-    // 외부에서 접근할 수 있는 함수
-    console.log("Public function called");
-    setValue();
-  };
-
-  // 외부로 노출될 함수나 변수를 반환
-  return {
-    publicFunction: publicFunction
-  };
-})();
-// 모듈에서 publicFunction 호출
-myModule.publicFunction();
-
-
-
-// 테스트2
-const myModule2 = (function () {
-  let counter = 0;
-
-  const incrementCounter = () => {
-    counter++;
-  };
-
-  const resetCounter = () => {
-    counter = 0;
-  };
-
-  const getCounterValue = () => {
-    return counter;
-  };
-
-  const incrementAndLogCounter = () => {
-    incrementCounter();
-    console.log(`Counter incremented to ${counter}`);
-  };
-
-  const publicFunction = () => {
-    incrementAndLogCounter();
-  };
 
   return {
     publicFunction: publicFunction,
-    getCounterValue: getCounterValue
+    fetchData: fetchData,
   };
 })();
 
-myModule2.publicFunction(); // Counter incremented to 1
-myModule2.publicFunction(); // Counter incremented to 2
+core.publicFunction();
+// fetchData 함수를 호출하여 데이터를 비동기적으로 불러오고 로딩 화면을 표시합니다.
+core.fetchData()
+  .then(data => {
+    // 데이터가 성공적으로 불러와졌을 때 수행할 작업을 여기에 작성합니다.
+    console.log('데이터를 성공적으로 불러왔습니다:', data, data[5183].id);
+  })
+  .catch(error => {
+    // 데이터 불러오기 중 오류가 발생했을 때 수행할 작업을 여기에 작성합니다.
+    console.error('데이터 불러오기 중 오류가 발생했습니다:', error);
+  });
 
-// console.log(myModule2.getCounterValue()); // 2
-
-
+  
 
 // 숨김처리
 // // 로딩 시간 체크
