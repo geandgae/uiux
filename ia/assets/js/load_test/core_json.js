@@ -104,28 +104,21 @@ const core = (() => {
   };
 
   // renderTable : initTable에서 생성한 article에 dataOrign을 뿌림(테이블 실제 데이터 생성)
-  // const renderTable = (data) => {
-  //   const article = document.querySelectorAll(".article");
-  //   article.forEach((item) => {
-  //     const id = item.getAttribute("id");
-  //     const tableBody = item.querySelector("tbody");
-  //     const filteredData = filterData(data, id);
-  //     tableBody.innerHTML = filteredData.join("");
-  //   });
-  // };
-
-  // renderTable 함수 업데이트
-  const renderTable = async (data) => {
-    displayLoading();
+  const renderTable = (data) => {
     const article = document.querySelectorAll(".article");
-    await new Promise((resolve) => setTimeout(resolve, 0)); // 비동기 처리를 위해 setTimeout 사용
     article.forEach((item) => {
       const id = item.getAttribute("id");
       const tableBody = item.querySelector("tbody");
       const filteredData = filterData(data, id);
       tableBody.innerHTML = filteredData.join("");
+
+      // 로딩 테스트
+      // return new Promise((resolve, reject) => {
+      //   resolve(item.querySelector("tbody").innerHTML = tr.join(""));
+      //   // reject 부분 추가
+      // })
+      // 로딩 테스트
     });
-    hideLoading();
   };
 
   // utils
@@ -174,64 +167,13 @@ const core = (() => {
     }
   };
 
-  // // initCategoryFilter : 카테고리 필터 초기화
-  // const initCategoryFilter = () => {
-  //   const categoryButtons = document.querySelectorAll(".category .btn");
-  //   const articles = document.querySelectorAll(".article");
-
-  //   const filterByCategory = (event) => {
-  //     const categoryId = event.currentTarget.id;
-
-  //     articles.forEach((item) => {
-  //       item.classList.add("hide");
-  //       if (categoryId === item.id || categoryId === "table_all") {
-  //         item.classList.remove("hide");
-  //       }
-  //     });
-  //   };
-
-  //   categoryButtons.forEach((item) => {
-  //     item.addEventListener("click", filterByCategory);
-  //   });
-  // };
-
-  // // initSelectFilter : 선택필터 초기화
-  // const initSelectFilter = () => {
-  //   const selects = document.querySelectorAll(".filter select");
-  //   const input = document.querySelector(".filter input[type=text]");
-
-  //   const filterBySelect = () => {
-  //     const keyword = input.value;
-  //     dataClone = filterData(dataOrign, keyword);
-  //     // renderTable : 테이블을 dataClone으로 다시 그림
-  //     renderTable(dataClone);
-  //   };
-
-  //   // 선택 옵션 실행
-  //   selects.forEach((item) => {
-  //     item.addEventListener("change", function () {
-  //       const option = item.options[item.selectedIndex].value;
-  //       input.value = option;
-  //       filterBySelect();
-  //     });
-  //   });
-
-  //   // 검색 입력값 실행
-  //   input.addEventListener("keyup", () => {
-  //     filterBySelect();
-  //   });
-  // };
-
-  // initCategoryFilter 함수 업데이트
+  // initCategoryFilter : 카테고리 필터 초기화
   const initCategoryFilter = () => {
     const categoryButtons = document.querySelectorAll(".category .btn");
     const articles = document.querySelectorAll(".article");
 
-    const filterByCategory = async (event) => {
-      displayLoading();
+    const filterByCategory = (event) => {
       const categoryId = event.currentTarget.id;
-
-      await new Promise((resolve) => setTimeout(resolve, 0)); // 비동기 처리를 위해 setTimeout 사용
 
       articles.forEach((item) => {
         item.classList.add("hide");
@@ -240,7 +182,26 @@ const core = (() => {
         }
       });
 
-      hideLoading();
+      // 로딩 테스트
+      // loadDiv.classList.add("active");
+      // const promise = function () {
+      //   return new Promise((resolve, reject) => {
+      //     resolve(articleView());
+      //   });
+      // };
+      // const runResult = async () => {
+      //   console.log("loding");
+      //   await promise();
+      //   console.log("loding-end");
+      //   loadDiv.classList.remove("active");
+      // };
+      // setTimeout(() => {
+      //   runResult();
+      // }, 0);
+      // 로딩 테스트
+
+      displayLoading();
+      setTimeout(hideLoading, 0);
     };
 
     categoryButtons.forEach((item) => {
@@ -248,30 +209,40 @@ const core = (() => {
     });
   };
 
-  // initSelectFilter 함수 업데이트
+  // initSelectFilter : 선택필터 초기화
   const initSelectFilter = () => {
     const selects = document.querySelectorAll(".filter select");
     const input = document.querySelector(".filter input[type=text]");
 
-    const filterBySelect = async () => {
-      displayLoading();
+    const filterBySelect = () => {
       const keyword = input.value;
       dataClone = filterData(dataOrign, keyword);
+      // renderTable : 테이블을 dataClone으로 다시 그림
+      renderTable(dataClone);
 
-      await renderTable(dataClone);
-      hideLoading();
+      // 로딩 테스트 --확인 후 삭제
+      // const runResult = async () => {
+      //   console.log("loding");
+      //   // await renderTable(dataClone);
+      //   console.log("loding-end");
+      //   loadDiv.classList.remove("active");
+      // };
+      // runResult();
+      // 로딩 테스트 --확인 후 삭제
     };
 
+    // 선택 옵션 실행
     selects.forEach((item) => {
-      item.addEventListener("change", async function () {
+      item.addEventListener("change", function () {
         const option = item.options[item.selectedIndex].value;
         input.value = option;
-        await filterBySelect();
+        filterBySelect();
       });
     });
 
-    input.addEventListener("keyup", async () => {
-      await filterBySelect();
+    // 검색 입력값 실행
+    input.addEventListener("keyup", () => {
+      filterBySelect();
     });
   };
 
@@ -400,47 +371,22 @@ const core = (() => {
     });
   };
 
-
   // toggleNoteExpansion : 노트 토글 기능
   const toggleNoteExpansion = () => {
-    // const toggleEvent = (elements) => {
-    //   elements.closest(".note").classList.toggle("active");
-    //   elements.classList.toggle("active");
-    // };
-
-    // const noteElements = document.querySelectorAll(".table td.note");
-    // noteElements.forEach((item) => {
-    //   const memos = item.querySelectorAll(".note-memo p");
-    //   const toggleButton = item.querySelector(".btn");
-    //   if (memos.length > 1) {
-    //     item.closest(".note").classList.add("multi");
-    //     toggleButton.addEventListener("click", () => toggleEvent(toggleButton));
-    //   }
-    // });
-
-
-    // 테스트중 : 데이터가 많을때 toggleNoteExpansion 이벤트 동작이 너무 느린데 해결방법이 있을까?
-    const evt = function(e) {
-      console.log("noteToggleEvt!!!!! --- evt");
-      e.currentTarget.closest(".note").classList.toggle("active");
-      e.currentTarget.classList.toggle("active");
+    const toggleEvent = (elements) => {
+      elements.closest(".note").classList.toggle("active");
+      elements.classList.toggle("active");
     };
-    
-    const noteToggleEvt = function() {
-      console.log("noteToggleEvt!!!!! --- loading");
-      let note = document.querySelectorAll(".table td.note");
-      if (note) {
-        note.forEach(function (item) {
-          let memo = item.querySelectorAll(".note-memo p");
-          let btn = item.querySelector(".btn");
-          if (memo.length > 1) {
-            item.closest(".note").classList.add("multi");
-            btn.addEventListener("click", evt);
-          }
-        });
+
+    const noteElements = document.querySelectorAll(".table td.note");
+    noteElements.forEach((item) => {
+      const memos = item.querySelectorAll(".note-memo p");
+      const toggleButton = item.querySelector(".btn");
+      if (memos.length > 1) {
+        item.closest(".note").classList.add("multi");
+        toggleButton.addEventListener("click", () => toggleEvent(toggleButton));
       }
-    };
-    noteToggleEvt();
+    });
   };
 
   // toggleRowSelection
@@ -482,25 +428,24 @@ const core = (() => {
     }, 500);
   };
 
-  // 로딩 표시
-  const displayLoading = () => {
-    loadDiv.classList.add("active");
-  };
+  // // 로딩 표시
+  // const displayLoading = () => {
+  //   loadDiv.classList.add("active");
+  // };
 
-  // 로딩 숨김
-  const hideLoading = () => {
-    loadDiv.classList.remove("active");
-  };
+  // // 로딩 숨김
+  // const hideLoading = () => {
+  //   loadDiv.classList.remove("active");
+  // };
 
+  const publicFunction = () => {
+    console.log("Public function called");
 
-  // publicFunction 함수 업데이트
-  const publicFunction = async () => {
-    displayLoading();
     initData(dataArray, dataOrign);
-    hideLoading();
-
     initTable();
-    await renderTable(dataOrign);
+    renderTable(dataOrign);
+
+    // utils
     initFilter();
     updateTableIndex();
     updateTableProgress();
@@ -509,27 +454,90 @@ const core = (() => {
     copyTableContent();
   };
 
-  // const publicFunction = () => {
-  //   console.log("Public function called");
-  //   initData(dataArray, dataOrign);
-  //   initTable();
-  //   renderTable(dataOrign);
 
-  //   // utils
-  //   initFilter();
-  //   updateTableIndex();
-  //   updateTableProgress();
-  //   toggleNoteExpansion();
-  //   toggleRowSelection();
-  //   copyTableContent();
-  // };
+  // loading
+  // 로딩 화면 표시 상태 변수
+  let isLoading = false;
+
+  // 데이터를 비동기적으로 불러오고 로딩 화면을 표시하는 함수
+  const fetchData = async () => {
+    try {
+      // 데이터를 불러오는 중임을 사용자에게 알리기 위해 로딩 화면을 표시합니다.
+      displayLoading();
+
+      // 실제로 데이터를 비동기적으로 불러오는 로직을 작성합니다.
+      const response = await fetch("./assets/js/load_test/data_00.json");
+      const data = await response.json();
+
+      // 데이터를 성공적으로 불러온 후 로딩 화면을 숨깁니다.
+      hideLoading();
+
+      // 불러온 데이터를 반환합니다.
+      return data;
+    } catch (error) {
+      // 데이터 불러오기 중 오류가 발생한 경우 오류를 콘솔에 기록합니다.
+      console.error("데이터를 불러오는 중 오류가 발생했습니다:", error);
+
+      // 로딩 화면을 숨깁니다.
+      hideLoading();
+
+      // 오류 발생 시에는 null을 반환합니다.
+      return null;
+    }
+  };
+
+  // 로딩 화면을 표시하는 함수
+  const displayLoading = () => {
+    // 이미 로딩 중인 경우 중복으로 로딩 화면을 표시하지 않도록 합니다.
+    if (isLoading) {
+      return;
+    }
+
+    // 로딩 화면을 보여주는 UI 작업을 수행합니다.
+    // 예를 들어, 화면의 특정 위치에 로딩 스피너를 추가하는 코드를 작성합니다.
+    const loadingSpinner = document.createElement("div");
+    loadingSpinner.classList.add("loading-spinner");
+    // 로딩 스피너를 보여주는 UI 작업을 수행합니다.
+    // 예를 들어, 어딘가에 loadingSpinner를 추가하거나, loadingSpinner를 화면에 표시합니다.
+
+    // 로딩 상태를 true로 설정합니다.
+    isLoading = true;
+  };
+
+  // 로딩 화면을 숨기는 함수
+  const hideLoading = () => {
+    // 로딩 화면을 숨기는 UI 작업을 수행합니다.
+    // 예를 들어, 화면에서 로딩 스피너를 제거하는 코드를 작성합니다.
+    const loadingSpinner = document.querySelector(".loading-spinner");
+    if (loadingSpinner) {
+      loadingSpinner.remove();
+    }
+
+    // 로딩 상태를 false로 설정합니다.
+    isLoading = false;
+  };
+
+
 
   return {
     publicFunction: publicFunction,
+    fetchData: fetchData,
   };
 })();
 
 core.publicFunction();
+// fetchData 함수를 호출하여 데이터를 비동기적으로 불러오고 로딩 화면을 표시합니다.
+core.fetchData()
+  .then(data => {
+    // 데이터가 성공적으로 불러와졌을 때 수행할 작업을 여기에 작성합니다.
+    console.log('데이터를 성공적으로 불러왔습니다:', data, data[5183].id);
+  })
+  .catch(error => {
+    // 데이터 불러오기 중 오류가 발생했을 때 수행할 작업을 여기에 작성합니다.
+    console.error('데이터 불러오기 중 오류가 발생했습니다:', error);
+  });
+
+  
 
 // 숨김처리
 // // 로딩 시간 체크
