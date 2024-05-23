@@ -3,14 +3,12 @@
 // Import
 import { at, st, ctg } from "./data_options.js";
 import { dataArray } from "./data_set.js";
-// arraySet 사용안함 확인 후 삭제
 
 // 테이블세팅 자동화 data_option 변수 처리
 // 정렬
 // json 로컬 저장
 // 인클루드
 // 다크모드
-// 로딩
 // ia 디자인
 // core
 // 코드정리 init, 실행부 분리
@@ -24,15 +22,15 @@ import { dataArray } from "./data_set.js";
 // todo
 // 변경할 점 data_options 변수 변경 ctg(카테고리) > initFilter, initTable / author(사용자) > 필터사용 / st(진행상태) > 상태별 개수
 // 상태값 : 진행/ing   보류/삭제/del     대기/검수/wait/chk     완료/수정/fin
-// 로딩테스트 주석은 비동기처리 / 공통함수로 일괄 처리
 // 메모 방식 변경... 레이어나 툴팁형태
 
 // Core module
 const core = (() => {
   // Global variables
   const loadDiv = document.querySelector(".loading");
-  const dataOrign = [];
-  let dataClone = [];
+  const dataOrign = []; // dataArray 저장
+  let dataClone = []; // dataOrign 필터 상태에 따라 저장
+  let dataSort = []; // 정렬용 데이터
 
   // initData : dataArray의 데이터를 테이블 형식으로 변환해서 dataOrign 배열에 저장
   const initData = (data, out) => {
@@ -40,7 +38,7 @@ const core = (() => {
       const hasMultipleNotes = item.note.match(/<p>/g).length > 1;
       const multiClass = hasMultipleNotes ? "multi" : "";
       const tableRow = `
-        <tr data-id="${item.id}">
+        <tr data-id="${item.id}" data-sort="${item.date}">
           <td class="index"><p></p></td>
           <td class="depth1"><p>${item.depth1}</p></td>
           <td class="depth2"><p>${item.depth2}</p></td>
@@ -52,7 +50,7 @@ const core = (() => {
           <td class="date"><p>${item.date}</p></td>
           <td class="state"><p>${item.state.trim() === "" ? "대기" : item.state}</p></td>
           <td class="author"><p>${item.author}</p></td>
-          <td class="note ${multiClass}" data-wacc-toggle="true">
+          <td class="note ${multiClass}">
             <button type="button" class="btn" title="더보기"><i></i></button>
             <div class="note-memo target">${item.note}</div>
           </td>
@@ -345,11 +343,20 @@ const core = (() => {
 
   // toggleNoteExpansion : 노트 토글 기능
   const toggleNoteExpansion = () => {
+    const notes = document.querySelectorAll(".note.multi");
+    notes.forEach((item) => {
+      item.addEventListener("click", () => {
+        item.classList.toggle("active");
+      });
+    });
+
+
+
+    // // ====== old version
     // const toggleEvent = (elements) => {
     //   elements.closest(".note").classList.toggle("active");
     //   elements.classList.toggle("active");
     // };
-
     // const noteElements = document.querySelectorAll(".table td.note");
     // noteElements.forEach((item) => {
     //   const memos = item.querySelectorAll(".note-memo p");
@@ -359,49 +366,33 @@ const core = (() => {
     //     toggleButton.addEventListener("click", () => toggleEvent(toggleButton));
     //   }
     // });
-
-    // 테스트중 : 데이터가 많을때 toggleNoteExpansion 이벤트 동작이 너무 느린데 해결방법이 있을까?
     // const evt = function(e) {
     //   console.log("noteToggleEvt!!!!! --- evt");
     //   e.currentTarget.closest(".note").classList.toggle("active");
     //   e.currentTarget.classList.toggle("active");
     // };
 
-    // old version
-    // const noteToggleEvt = function() {
-    //   let note = document.querySelectorAll(".table td.note");
-    //   note.forEach(function (item) {
-    //     console.log(note)
-    //     let memo = item.querySelectorAll(".note-memo p");
-    //     let btn = item.querySelector(".btn");
-    //     if (memo.length > 1) {
-    //       item.closest(".note").classList.add("multi");
-    //       btn.addEventListener("click", evt);
-    //     }
-    //   });
-    // };
-    // noteToggleEvt();
+
+    // // ====== old version2
+    // let note = document.querySelectorAll(".table td.note");
+    // note.forEach(function (item) {
+    //   console.log(note)
+    //   let memo = item.querySelectorAll(".note-memo p");
+    //   let btn = item.querySelector(".btn");
+    //   if (memo.length > 1) {
+    //     item.closest(".note").classList.add("multi");
+    //     btn.addEventListener("click", evt);
+    //   }
+    // });
 
 
-    // 수정중
-    const multi = document.querySelectorAll(".note.multi");
-    console.log(multi);
-    multi.forEach((item) => {
-      item.addEventListener("click", () => {
-        item.classList.toggle("active");
-      });
-    });
-
-
-    // // IntersectionObserver
+    // //  ====== IntersectionObserver
     // const tables = document.querySelectorAll(".table");
-
     // const toggleEvent = (button) => {
     //   const note = button.closest(".note");
     //   note.classList.toggle("active");
     //   button.classList.toggle("active");
     // };
-
     // const handleIntersection = (entries, observer) => {
     //   entries.forEach((entry) => {
     //     if (entry.isIntersecting) {
@@ -413,21 +404,17 @@ const core = (() => {
     //     }
     //   });
     // };
-
     // const observer = new IntersectionObserver(handleIntersection, {
     //   root: null, // Use the viewport as the root
     //   rootMargin: "0px",
     //   threshold: 0.1, // Trigger when at least 10% of the element is visible
     // });
-
     // tables.forEach((table) => {
     //   const noteCells = table.querySelectorAll(".note.multi");
     //   noteCells.forEach((noteCell) => {
     //     observer.observe(noteCell);
     //   });
     // });
-
-
   };
 
   // toggleRowSelection : 테이블 열 선택
@@ -443,6 +430,65 @@ const core = (() => {
       });
     });
   };
+
+  // sortTableData : 테이블 정렬
+  const sortTableData = () => {
+    const dateTh = document.querySelectorAll(".table th.date");
+
+    // handleSortClick : 정렬 버튼 클릭 핸들러
+    const handleSortClick = (sortType, item) => {
+      // sortNum : 숫자 및 날짜 정렬 함수
+      const sortNum = (a, b) => {
+        let datasetA = a.dataset.sort;
+        let datasetB = b.dataset.sort;
+        let na = (datasetA + "").replace(/[-,\s\xA0]+/gi, "");
+        let nb = (datasetB + "").replace(/[-,\s\xA0]+/gi, "");
+        let numA = parseFloat(na) + "";
+        let numB = parseFloat(nb) + "";
+        
+        if (numA === "NaN" || numB === "NaN" || na !== numA || nb !== numB) return false;
+        
+        return sortType === "sortasc" ? parseFloat(na) - parseFloat(nb) : parseFloat(nb) - parseFloat(na);
+      };
+
+      const tbody = item.closest(".table").querySelector("tbody");
+      const rows = Array.from(item.closest(".table").querySelectorAll(".table tbody tr"));
+      const sortedArray = rows.sort(sortNum);
+      arrayReload(sortedArray, tbody);
+    };
+
+    // arrayReload : 정렬된 배열을 재렌더링
+    const arrayReload = (array) => {
+      const data = array.map(row => ({
+        id: row.dataset.id,
+        depth1: row.querySelector(".depth1").innerText,
+        depth2: row.querySelector(".depth2").innerText,
+        depth3: row.querySelector(".depth3").innerText,
+        depth4: row.querySelector(".depth4").innerText,
+        view_id: row.querySelector(".id").innerText,
+        view_name: row.querySelector(".name").innerText,
+        view_url: row.querySelector(".url").innerText,
+        date: row.querySelector(".date").innerText,
+        state: row.querySelector(".state").innerText,
+        author: row.querySelector(".author").innerText,
+        note: row.querySelector(".note-memo").innerHTML
+      }));
+      console.log(data);
+      const dataSort = [];
+      initData(data, dataSort);
+      renderTable(dataSort);
+    };
+
+    // 이벤트 리스너 설정
+    dateTh.forEach(item => {
+      const asc = item.querySelector(".sortasc");
+      const desc = item.querySelector(".sortdesc");
+
+      asc.addEventListener("click", () => handleSortClick("sortasc", asc));
+      desc.addEventListener("click", () => handleSortClick("sortdesc", desc));
+    });
+
+  }
 
   
 
@@ -504,9 +550,10 @@ const core = (() => {
     initFilter();
     updateTableIndex();
     updateTableProgress();
+    copyTableContent();
     toggleNoteExpansion();
     toggleRowSelection();
-    copyTableContent();
+    sortTableData();
     // hideLoading();
   };
 
