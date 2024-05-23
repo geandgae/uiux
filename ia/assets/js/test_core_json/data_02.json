@@ -1,0 +1,16 @@
+[
+  { 
+    "id": "table_00",
+    "depth1": "ct01_title",
+    "depth2": "d99",
+    "depth3": "d3",
+    "depth4": "d4",
+    "view_id": "view_id",
+    "view_name": "view_name",
+    "view_url": "aaa/aaa.url",
+    "date": "2022-10-28",
+    "state": "fin",
+    "author": "ct00_author",
+    "note": "<p>note1</p><p>note2</p><p>note3</p>"
+  }
+]

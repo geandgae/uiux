@@ -3,14 +3,12 @@
 // Import
 import { at, st, ctg } from "./data_options.js";
 import { dataArray } from "./data_set.js";
-// arraySet 사용안함 확인 후 삭제
 
 // 테이블세팅 자동화 data_option 변수 처리
 // 정렬
 // json 로컬 저장
 // 인클루드
 // 다크모드
-// 로딩
 // ia 디자인
 // core
 // 코드정리 init, 실행부 분리
@@ -24,20 +22,26 @@ import { dataArray } from "./data_set.js";
 // todo
 // 변경할 점 data_options 변수 변경 ctg(카테고리) > initFilter, initTable / author(사용자) > 필터사용 / st(진행상태) > 상태별 개수
 // 상태값 : 진행/ing   보류/삭제/del     대기/검수/wait/chk     완료/수정/fin
-// 로딩테스트 주석은 비동기처리 / 공통함수로 일괄 처리
+// 메모 방식 변경... 레이어나 툴팁형태 !! 
 
 // Core module
 const core = (() => {
   // Global variables
   const loadDiv = document.querySelector(".loading");
-  const dataOrign = [];
-  let dataClone = [];
+  const dataOrign = []; // dataArray 저장
+  let dataClone = []; // dataOrign 필터 상태에 따라 저장
+  // let dataSort = []; // 정렬용 데이터
 
   // initData : dataArray의 데이터를 테이블 형식으로 변환해서 dataOrign 배열에 저장
   const initData = (data, out) => {
     data.forEach((item) => {
+      const pTags = item.note.match(/<p>/g) || [];
+      const numPTags = pTags.length;
+      // const hasMultipleNotes = item.note.match(/<p>/g).length > 1;
+      const hasMultipleNotes = numPTags > 1;
+      const multiClass = hasMultipleNotes ? "multi" : "";
       const tableRow = `
-        <tr data-id="${item.id}">
+        <tr data-id="${item.id}" data-sort="${item.date}">
           <td class="index"><p></p></td>
           <td class="depth1"><p>${item.depth1}</p></td>
           <td class="depth2"><p>${item.depth2}</p></td>
@@ -49,7 +53,7 @@ const core = (() => {
           <td class="date"><p>${item.date}</p></td>
           <td class="state"><p>${item.state.trim() === "" ? "대기" : item.state}</p></td>
           <td class="author"><p>${item.author}</p></td>
-          <td class="note" data-wacc-toggle="true">
+          <td class="note ${multiClass}">
             <button type="button" class="btn" title="더보기"><i></i></button>
             <div class="note-memo target">${item.note}</div>
           </td>
@@ -104,21 +108,17 @@ const core = (() => {
   };
 
   // renderTable : initTable에서 생성한 article에 dataOrign을 뿌림(테이블 실제 데이터 생성)
-  const renderTable = (data) => {
+  const renderTable =  async (data) => {
+    displayLoading();
     const article = document.querySelectorAll(".article");
+    await waitTime(500); // 비동기 처리를 위해 setTimeout 사용
     article.forEach((item) => {
       const id = item.getAttribute("id");
       const tableBody = item.querySelector("tbody");
       const filteredData = filterData(data, id);
       tableBody.innerHTML = filteredData.join("");
-
-      // 로딩 테스트
-      // return new Promise((resolve, reject) => {
-      //   resolve(item.querySelector("tbody").innerHTML = tr.join(""));
-      //   // reject 부분 추가
-      // })
-      // 로딩 테스트
     });
+    hideLoading();
   };
 
   // utils
@@ -127,7 +127,7 @@ const core = (() => {
     initAuthorOptions();
     initStateOptions();
     initCategoryButtons();
-    initCategoryFilter();
+    categoryFilter();
     initSelectFilter();
   };
 
@@ -153,7 +153,7 @@ const core = (() => {
     stateSelect.innerHTML = StateOptions.join("");
   };
 
-  // initCategoryButtons : 카테고리 버튼 초기화 : 카테고리 버튼 생성 삭제할 수도있음
+  // initCategoryButtons : 카테고리 초기화
   const initCategoryButtons = () => {
     const categoryContainer = document.querySelector(".category");
     const categorybuttons = [`<li><button type="button" class="btn" id="table_all">전체보기</button></li>`];
@@ -167,41 +167,22 @@ const core = (() => {
     }
   };
 
-  // initCategoryFilter : 카테고리 필터 초기화
-  const initCategoryFilter = () => {
+  // categoryFilter : 카테고리 필터
+  const categoryFilter = () => {
     const categoryButtons = document.querySelectorAll(".category .btn");
     const articles = document.querySelectorAll(".article");
 
-    const filterByCategory = (event) => {
+    const filterByCategory = async (event) => {
+      displayLoading();
       const categoryId = event.currentTarget.id;
-
+      await waitTime(500); // 비동기 처리를 위해 setTimeout 사용
       articles.forEach((item) => {
         item.classList.add("hide");
         if (categoryId === item.id || categoryId === "table_all") {
           item.classList.remove("hide");
         }
       });
-
-      // 로딩 테스트
-      // loadDiv.classList.add("active");
-      // const promise = function () {
-      //   return new Promise((resolve, reject) => {
-      //     resolve(articleView());
-      //   });
-      // };
-      // const runResult = async () => {
-      //   console.log("loding");
-      //   await promise();
-      //   console.log("loding-end");
-      //   loadDiv.classList.remove("active");
-      // };
-      // setTimeout(() => {
-      //   runResult();
-      // }, 0);
-      // 로딩 테스트
-
-      displayLoading();
-      setTimeout(hideLoading, 0);
+      hideLoading();
     };
 
     categoryButtons.forEach((item) => {
@@ -219,16 +200,8 @@ const core = (() => {
       dataClone = filterData(dataOrign, keyword);
       // renderTable : 테이블을 dataClone으로 다시 그림
       renderTable(dataClone);
-
-      // 로딩 테스트 --확인 후 삭제
-      // const runResult = async () => {
-      //   console.log("loding");
-      //   // await renderTable(dataClone);
-      //   console.log("loding-end");
-      //   loadDiv.classList.remove("active");
-      // };
-      // runResult();
-      // 로딩 테스트 --확인 후 삭제
+      // dataClone 테이블을 렌더링한 후 이벤트 리스너 다시 설정
+      attachEventListeners();
     };
 
     // 선택 옵션 실행
@@ -373,23 +346,81 @@ const core = (() => {
 
   // toggleNoteExpansion : 노트 토글 기능
   const toggleNoteExpansion = () => {
-    const toggleEvent = (elements) => {
-      elements.closest(".note").classList.toggle("active");
-      elements.classList.toggle("active");
-    };
-
-    const noteElements = document.querySelectorAll(".table td.note");
-    noteElements.forEach((item) => {
-      const memos = item.querySelectorAll(".note-memo p");
-      const toggleButton = item.querySelector(".btn");
-      if (memos.length > 1) {
-        item.closest(".note").classList.add("multi");
-        toggleButton.addEventListener("click", () => toggleEvent(toggleButton));
-      }
+    const notes = document.querySelectorAll(".note.multi");
+    notes.forEach((item) => {
+      item.addEventListener("click", () => {
+        item.classList.toggle("active");
+      });
     });
+
+
+
+    // // ====== old version
+    // const toggleEvent = (elements) => {
+    //   elements.closest(".note").classList.toggle("active");
+    //   elements.classList.toggle("active");
+    // };
+    // const noteElements = document.querySelectorAll(".table td.note");
+    // noteElements.forEach((item) => {
+    //   const memos = item.querySelectorAll(".note-memo p");
+    //   const toggleButton = item.querySelector(".btn");
+    //   if (memos.length > 1) {
+    //     item.closest(".note").classList.add("multi");
+    //     toggleButton.addEventListener("click", () => toggleEvent(toggleButton));
+    //   }
+    // });
+    // const evt = function(e) {
+    //   console.log("noteToggleEvt!!!!! --- evt");
+    //   e.currentTarget.closest(".note").classList.toggle("active");
+    //   e.currentTarget.classList.toggle("active");
+    // };
+
+
+    // // ====== old version2
+    // let note = document.querySelectorAll(".table td.note");
+    // note.forEach(function (item) {
+    //   console.log(note)
+    //   let memo = item.querySelectorAll(".note-memo p");
+    //   let btn = item.querySelector(".btn");
+    //   if (memo.length > 1) {
+    //     item.closest(".note").classList.add("multi");
+    //     btn.addEventListener("click", evt);
+    //   }
+    // });
+
+
+    // //  ====== IntersectionObserver
+    // const tables = document.querySelectorAll(".table");
+    // const toggleEvent = (button) => {
+    //   const note = button.closest(".note");
+    //   note.classList.toggle("active");
+    //   button.classList.toggle("active");
+    // };
+    // const handleIntersection = (entries, observer) => {
+    //   entries.forEach((entry) => {
+    //     if (entry.isIntersecting) {
+    //       const button = entry.target.querySelector(".btn");
+    //       if (button) {
+    //         button.addEventListener("click", () => toggleEvent(button));
+    //       }
+    //       observer.unobserve(entry.target);
+    //     }
+    //   });
+    // };
+    // const observer = new IntersectionObserver(handleIntersection, {
+    //   root: null, // Use the viewport as the root
+    //   rootMargin: "0px",
+    //   threshold: 0.1, // Trigger when at least 10% of the element is visible
+    // });
+    // tables.forEach((table) => {
+    //   const noteCells = table.querySelectorAll(".note.multi");
+    //   noteCells.forEach((noteCell) => {
+    //     observer.observe(noteCell);
+    //   });
+    // });
   };
 
-  // toggleRowSelection
+  // toggleRowSelection : 테이블 열 선택
   const toggleRowSelection = () => {
     const toggleSelection = (element) => {
       element.classList.toggle("select");
@@ -403,7 +434,71 @@ const core = (() => {
     });
   };
 
+  // sortTableData : 테이블 정렬
+  const sortTableData = () => {
+    const dateTh = document.querySelectorAll(".table th.date");
+
+    // handleSortClick : 정렬 버튼 클릭 핸들러
+    const handleSortClick = (sortType, item) => {
+      // sortNum : 숫자 및 날짜 정렬 함수
+      const sortNum = (a, b) => {
+        let datasetA = a.dataset.sort;
+        let datasetB = b.dataset.sort;
+        let na = (datasetA + "").replace(/[-,\s\xA0]+/gi, "");
+        let nb = (datasetB + "").replace(/[-,\s\xA0]+/gi, "");
+        let numA = parseFloat(na) + "";
+        let numB = parseFloat(nb) + "";
+        
+        if (numA === "NaN" || numB === "NaN" || na !== numA || nb !== numB) return false;
+        
+        return sortType === "sortasc" ? parseFloat(na) - parseFloat(nb) : parseFloat(nb) - parseFloat(na);
+      };
+
+      const tbody = item.closest(".table").querySelector("tbody");
+      const rows = Array.from(item.closest(".table").querySelectorAll(".table tbody tr"));
+      const sortedArray = rows.sort(sortNum);
+      arrayReload(sortedArray, tbody);
+    };
+
+    // arrayReload : 정렬된 배열을 재렌더링
+    const arrayReload = (array) => {
+      const data = array.map(row => ({
+        id: row.dataset.id,
+        depth1: row.querySelector(".depth1").innerText,
+        depth2: row.querySelector(".depth2").innerText,
+        depth3: row.querySelector(".depth3").innerText,
+        depth4: row.querySelector(".depth4").innerText,
+        view_id: row.querySelector(".id").innerText,
+        view_name: row.querySelector(".name").innerText,
+        view_url: row.querySelector(".url").innerText,
+        date: row.querySelector(".date").innerText,
+        state: row.querySelector(".state").innerText,
+        author: row.querySelector(".author").innerText,
+        note: row.querySelector(".note-memo").innerHTML
+      }));
+      console.log(data);
+      const dataSort = [];
+      initData(data, dataSort);
+      renderTable(dataSort);
+    };
+
+    // 이벤트 리스너 설정
+    dateTh.forEach(item => {
+      const asc = item.querySelector(".sortasc");
+      const desc = item.querySelector(".sortdesc");
+
+      asc.addEventListener("click", () => handleSortClick("sortasc", asc));
+      desc.addEventListener("click", () => handleSortClick("sortdesc", desc));
+    });
+
+  }
+
+  
+
   // 내부함수
+  // 비동기 처리 setTimeout
+  const waitTime = (timeToDelay) => new Promise((resolve) => setTimeout(resolve, timeToDelay));
+
   // filterData : renderTable, selectFilter 사용
   const filterData = (data, query) => {
     return data.filter((i) => i.toLowerCase().indexOf(query.toLowerCase()) > -1);
@@ -428,152 +523,87 @@ const core = (() => {
     }, 500);
   };
 
-  // // 로딩 표시
-  // const displayLoading = () => {
-  //   loadDiv.classList.add("active");
-  // };
+  // displayLoading : 로딩 표시
+  const displayLoading = () => {
+    loadDiv.classList.add("active");
+  };
 
-  // // 로딩 숨김
-  // const hideLoading = () => {
-  //   loadDiv.classList.remove("active");
-  // };
+  // hideLoading : 로딩 숨김
+  const hideLoading = () => {
+    loadDiv.classList.remove("active");
+  };
 
-  const publicFunction = () => {
+  // attachEventListeners : 이벤트 리스너를 필터된 테이블(dataClone)에 다시 바인딩
+  const attachEventListeners = () => {
+    // updateTableIndex();
+    // updateTableProgress();
+    copyTableContent();
+    toggleNoteExpansion();
+    toggleRowSelection();
+  };
+
+  // publicFunction : 외부로 return
+  const publicFunction = async () => {
     console.log("Public function called");
-
     initData(dataArray, dataOrign);
     initTable();
-    renderTable(dataOrign);
+    await renderTable(dataOrign);
 
     // utils
     initFilter();
     updateTableIndex();
     updateTableProgress();
+    copyTableContent();
     toggleNoteExpansion();
     toggleRowSelection();
-    copyTableContent();
+    sortTableData();
+    // hideLoading();
   };
-
-
-  // loading
-  // 로딩 화면 표시 상태 변수
-  let isLoading = false;
-
-  // 데이터를 비동기적으로 불러오고 로딩 화면을 표시하는 함수
-  const fetchData = async () => {
-    try {
-      // 데이터를 불러오는 중임을 사용자에게 알리기 위해 로딩 화면을 표시합니다.
-      displayLoading();
-
-      // 실제로 데이터를 비동기적으로 불러오는 로직을 작성합니다.
-      const response = await fetch("./assets/js/load_test/data_00.json");
-      const data = await response.json();
-
-      // 데이터를 성공적으로 불러온 후 로딩 화면을 숨깁니다.
-      hideLoading();
-
-      // 불러온 데이터를 반환합니다.
-      return data;
-    } catch (error) {
-      // 데이터 불러오기 중 오류가 발생한 경우 오류를 콘솔에 기록합니다.
-      console.error("데이터를 불러오는 중 오류가 발생했습니다:", error);
-
-      // 로딩 화면을 숨깁니다.
-      hideLoading();
-
-      // 오류 발생 시에는 null을 반환합니다.
-      return null;
-    }
-  };
-
-  // 로딩 화면을 표시하는 함수
-  const displayLoading = () => {
-    // 이미 로딩 중인 경우 중복으로 로딩 화면을 표시하지 않도록 합니다.
-    if (isLoading) {
-      return;
-    }
-
-    // 로딩 화면을 보여주는 UI 작업을 수행합니다.
-    // 예를 들어, 화면의 특정 위치에 로딩 스피너를 추가하는 코드를 작성합니다.
-    const loadingSpinner = document.createElement("div");
-    loadingSpinner.classList.add("loading-spinner");
-    // 로딩 스피너를 보여주는 UI 작업을 수행합니다.
-    // 예를 들어, 어딘가에 loadingSpinner를 추가하거나, loadingSpinner를 화면에 표시합니다.
-
-    // 로딩 상태를 true로 설정합니다.
-    isLoading = true;
-  };
-
-  // 로딩 화면을 숨기는 함수
-  const hideLoading = () => {
-    // 로딩 화면을 숨기는 UI 작업을 수행합니다.
-    // 예를 들어, 화면에서 로딩 스피너를 제거하는 코드를 작성합니다.
-    const loadingSpinner = document.querySelector(".loading-spinner");
-    if (loadingSpinner) {
-      loadingSpinner.remove();
-    }
-
-    // 로딩 상태를 false로 설정합니다.
-    isLoading = false;
-  };
-
-
 
   return {
     publicFunction: publicFunction,
-    fetchData: fetchData,
   };
 })();
 
 core.publicFunction();
-// fetchData 함수를 호출하여 데이터를 비동기적으로 불러오고 로딩 화면을 표시합니다.
-core.fetchData()
-  .then(data => {
-    // 데이터가 성공적으로 불러와졌을 때 수행할 작업을 여기에 작성합니다.
-    console.log('데이터를 성공적으로 불러왔습니다:', data, data[5183].id);
-  })
-  .catch(error => {
-    // 데이터 불러오기 중 오류가 발생했을 때 수행할 작업을 여기에 작성합니다.
-    console.error('데이터 불러오기 중 오류가 발생했습니다:', error);
-  });
 
-  
 
-// 숨김처리
-// // 로딩 시간 체크
-// window.addEventListener('DOMContentLoaded', function() {
-//   loadDiv.classList.remove("active");
 
-//   // 시간체크
-//   setTimeout(function() {
-//     // performance.timing 더이상 사용 안함
-//     // PerformanceNavigationTiming 이걸로 변경
-//     const ntime = performance.timing;
-//     const total = ntime.loadEventEnd - ntime.navigationStart; //전체 소요시간
-//     const redirect = ntime.redirectEnd - ntime.redirectStart; // 동일 origin에서의 redirect 시간
-//     const cache = ntime.domainLookupStart - ntime.fetchStart; // cache 시간
-//     const dnslookup = ntime.domainLookupEnd - ntime.domainLookupStart; //DNS Lookup 시간
-//     const connect = ntime.connectEnd - ntime.connectStart; // 웹서버 연결 시간
-//     const request = ntime.responseStart - ntime.requestStart; // 요청 소요 시간
-//     const response = ntime.responseEnd - ntime.responseStart; // 응답 데이터를 모두 받은 시간
-//     const dom = ntime.domComplete - ntime.domLoading; // DOM객체 생성 시간 *******************
-//     const load = ntime.loadEventEnd - ntime.loadEventStart; // 브라우저의 Load 이벤트 실행시간
-//     const pageEnd = ntime.loadEventEnd - ntime.responseEnd; //  서버에서 페이지를 받고 페이지를 로드하는데 걸린 시간
-//     // var networkDelay = ntime.responseEnd - ntime.fetchStart; //  네트워크 지연 시간
-//     console.log(ntime);
 
-//     console.log("total : " + total + "ms  >>>>>>>  전체 소요시간");
-//     console.log("redirect : " + redirect + "ms  >>>>>>>   동일 origin에서의 redirect 시간");
-//     console.log("cache : " + cache + "ms   >>>>>>>  cache 시간");
-//     console.log("dnslookup : " + dnslookup + "ms  >>>>>>>  DNS Lookup 시간");
-//     console.log("connect : " + connect + "ms  >>>>>>>  웹서버 연결 시간");
-//     console.log("request : " + request + "ms  >>>>>>>  요청 소요 시간");
-//     console.log("response : " + response + "ms  >>>>>>>  첫 응답으로 부터 응답 데이터를 모두 받은 시간");
-//     console.log("dom : " + dom + "ms  >>>>>>>  DOM객체 로드 완료 시간");
-//     console.log("load : " + load + "ms  >>>>>>>  브라우저의 Load 이벤트 실행시간");
-//     console.log("pageEnd : " + pageEnd + "ms  >>>>>>>  서버에서 페이지를 받고 페이지를 로드하는데 걸린 시간");
 
-//   }, 6000);
 
-//   console.log("==================== start!! ====================");
-// });
+// 로딩 시간 체크
+window.addEventListener('DOMContentLoaded', function() {
+  // 시간체크
+  setTimeout(function() {
+    // performance.timing 더이상 사용 안함
+    // PerformanceNavigationTiming 이걸로 변경
+    const ntime = performance.timing;
+    const total = ntime.loadEventEnd - ntime.navigationStart; //전체 소요시간
+    const redirect = ntime.redirectEnd - ntime.redirectStart; // 동일 origin에서의 redirect 시간
+    const cache = ntime.domainLookupStart - ntime.fetchStart; // cache 시간
+    const dnslookup = ntime.domainLookupEnd - ntime.domainLookupStart; //DNS Lookup 시간
+    const connect = ntime.connectEnd - ntime.connectStart; // 웹서버 연결 시간
+    const request = ntime.responseStart - ntime.requestStart; // 요청 소요 시간
+    const response = ntime.responseEnd - ntime.responseStart; // 응답 데이터를 모두 받은 시간
+    const dom = ntime.domComplete - ntime.domLoading; // DOM객체 생성 시간 *******************
+    const load = ntime.loadEventEnd - ntime.loadEventStart; // 브라우저의 Load 이벤트 실행시간
+    const pageEnd = ntime.loadEventEnd - ntime.responseEnd; //  서버에서 페이지를 받고 페이지를 로드하는데 걸린 시간
+    // var networkDelay = ntime.responseEnd - ntime.fetchStart; //  네트워크 지연 시간
+    console.log(ntime);
+
+    console.log("total : " + total + "ms  >>>>>>>  전체 소요시간");
+    console.log("redirect : " + redirect + "ms  >>>>>>>   동일 origin에서의 redirect 시간");
+    console.log("cache : " + cache + "ms   >>>>>>>  cache 시간");
+    console.log("dnslookup : " + dnslookup + "ms  >>>>>>>  DNS Lookup 시간");
+    console.log("connect : " + connect + "ms  >>>>>>>  웹서버 연결 시간");
+    console.log("request : " + request + "ms  >>>>>>>  요청 소요 시간");
+    console.log("response : " + response + "ms  >>>>>>>  첫 응답으로 부터 응답 데이터를 모두 받은 시간");
+    console.log("dom : " + dom + "ms  >>>>>>>  DOM객체 로드 완료 시간");
+    console.log("load : " + load + "ms  >>>>>>>  브라우저의 Load 이벤트 실행시간");
+    console.log("pageEnd : " + pageEnd + "ms  >>>>>>>  서버에서 페이지를 받고 페이지를 로드하는데 걸린 시간");
+
+  }, 6000);
+
+  console.log("==================== start!! ====================");
+});
