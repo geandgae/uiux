@@ -42,7 +42,7 @@ import {data_04} from "./data_04.js";
 export const dataArray = [
   ...data_00,
   ...data_01, 
-  ...data_02,
+  // ...data_02,
   // ...data_03,
   // ...data_04,
   // ...data_05,

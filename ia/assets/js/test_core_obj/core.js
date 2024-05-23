@@ -22,7 +22,7 @@ import { dataArray } from "./data_set.js";
 // todo
 // 변경할 점 data_options 변수 변경 ctg(카테고리) > initFilter, initTable / author(사용자) > 필터사용 / st(진행상태) > 상태별 개수
 // 상태값 : 진행/ing   보류/삭제/del     대기/검수/wait/chk     완료/수정/fin
-// 메모 방식 변경... 레이어나 툴팁형태 !! 
+// 메모 방식 변경... 레이어나 툴팁형태 !!
 
 // Core module
 const core = (() => {
@@ -34,8 +34,12 @@ const core = (() => {
 
   // initData : dataArray의 데이터를 테이블 형식으로 변환해서 dataOrign 배열에 저장
   const initData = (data, out) => {
-    const btnMore = `<button type="button" class="btn" title="더보기"><i></i></button>`
+    const btnMore = `<button type="button" class="btn" title="더보기"><i></i></button>`;
     data.forEach((item) => {
+      // date
+      const recentDate = calculateDateDifference(item.date);
+      // console.log(recentDate);
+      // note
       // const pTags = item.note.match(/<p>/g) || [];
       // const numPTags = pTags.length;
       // const hasMultipleNotes = item.note.match(/<p>/g).length > 1;
@@ -49,7 +53,7 @@ const core = (() => {
         noteRow.push(`<p>${note}</p>`);
       });
       const tableRow = `
-        <tr data-id="${item.id}" data-sort="${item.date}">
+        <tr data-id="${item.id}" data-sort="${item.date}" class="${recentDate > -6 ? "recent" : ""}">
           <td class="index"><p></p></td>
           <td class="depth1"><p>${item.depth1}</p></td>
           <td class="depth2"><p>${item.depth2}</p></td>
@@ -62,7 +66,7 @@ const core = (() => {
           <td class="state"><p>${item.state.trim() === "" ? "대기" : item.state}</p></td>
           <td class="author"><p>${item.author}</p></td>
           <td class="note ${multiClass}">
-            ${multiClass.trim()  === "" ? "" : btnMore}
+            ${multiClass.trim() === "" ? "" : btnMore}
             <div class="note-memo target">${noteRow.join("")}</div>
           </td>
         </tr>
@@ -116,7 +120,7 @@ const core = (() => {
   };
 
   // renderTable : initTable에서 생성한 article에 dataOrign을 뿌림(테이블 실제 데이터 생성)
-  const renderTable =  async (data) => {
+  const renderTable = async (data) => {
     displayLoading();
     const article = document.querySelectorAll(".article");
     await waitTime(500); // 비동기 처리를 위해 setTimeout 사용
@@ -313,43 +317,78 @@ const core = (() => {
     progress.innerHTML = progressHTML;
   };
 
+  let copyTableContentEnabled = false; // copyTableContent 활성화 상태 변수
+  let copyTableContentTimeout; // 이전 실행 취소를 위한 타임아웃 변수
+
+  // copyTableContent 함수를 활성화/비활성화하는 함수
+  const toggleCopyTableContent = () => {
+    copyTableContentEnabled = !copyTableContentEnabled;
+    console.log(`copyTableContent is now ${copyTableContentEnabled ? "enabled" : "disabled"}.`);
+  };
+
+  // toggleCopyTableContent 함수를 호출하여 활성화/비활성화 상태를 변경합니다.
+  document.querySelector(".mode-copy").addEventListener("click", () => {
+    copyTableContentEnabled = true;
+    copyTableContent();
+    console.log(copyTableContentEnabled);
+  });
+  document.querySelector(".mode-normal").addEventListener("click", () => {
+    copyTableContentEnabled = false;
+    copyTableContent();
+    console.log(copyTableContentEnabled);
+  });
+
   // copyTableContent : 테이블 내용을 복사하는 함수
   const copyTableContent = () => {
-    // 클립보드에 텍스트를 복사하는 함수
-    const copyTextToClipboard = async (element) => {
-      try {
-        // 대상 요소의 텍스트 내용을 클립보드에 복사 시도
-        await navigator.clipboard.writeText(element.textContent);
+    // 이전 실행을 취소합니다.
+    clearTimeout(copyTableContentTimeout);
 
-        // 복사 성공 메시지와 복사된 내용을 콘솔에 출력
-        console.log("복사 완료");
-        console.log(element.textContent);
 
-        // 복사된 내용을 변수에 저장
-        const copyContent = element.textContent;
+    // 복사 기능이 비활성화되어 있으면 함수를 종료합니다.
+    if (!copyTableContentEnabled) {
+      return;
+    }
+    
 
-        // 복사된 내용으로 토스트 팝업 호출 (setToast 함수가 정의되어 있어야 합니다)
-        setToast(copyContent);
-      } catch (error) {
-        // 복사 실패 메시지와 시도한 내용을 콘솔에 출력
-        console.log("복사 실패");
-        console.log(element.textContent);
+    
+    copyTableContentTimeout = setTimeout(() => {
+      // 클립보드에 텍스트를 복사하는 함수
+      const copyTextToClipboard = async (element) => {
+        try {
+          // 대상 요소의 텍스트 내용을 클립보드에 복사 시도
+          await navigator.clipboard.writeText(element.textContent);
 
-        // 에러 메시지를 콘솔에 출력
-        console.error(error);
-      }
-    };
+          // 복사 성공 메시지와 복사된 내용을 콘솔에 출력
+          console.log("복사 완료");
+          console.log(element.textContent);
 
-    // 모든 .table td p 요소를 선택
-    const elements = document.querySelectorAll(".table td p");
+          // 복사된 내용을 변수에 저장
+          const copyContent = element.textContent;
 
-    // 각 요소에 클릭 이벤트 리스너를 추가
-    elements.forEach((item) => {
-      item.addEventListener("click", function () {
-        // 클릭된 요소의 텍스트를 클립보드에 복사
-        copyTextToClipboard(item);
+          // 복사된 내용으로 토스트 팝업 호출 (setToast 함수가 정의되어 있어야 합니다)
+          setToast(copyContent);
+        } catch (error) {
+          // 복사 실패 메시지와 시도한 내용을 콘솔에 출력
+          console.log("복사 실패");
+          console.log(element.textContent);
+
+          // 에러 메시지를 콘솔에 출력
+          console.error(error);
+        }
+      };
+
+      // 모든 .table td p 요소를 선택
+      const elements = document.querySelectorAll(".table td p");
+
+      // 각 요소에 클릭 이벤트 리스너를 추가
+      elements.forEach((item) => {
+        item.addEventListener("click", function () {
+          // 클릭된 요소의 텍스트를 클립보드에 복사
+          copyTextToClipboard(item);
+        });
       });
-    });
+    },0);
+
   };
 
   // toggleNoteExpansion : 노트 토글 기능
@@ -360,8 +399,6 @@ const core = (() => {
         item.classList.toggle("active");
       });
     });
-
-
 
     // // ====== old version
     // const toggleEvent = (elements) => {
@@ -383,7 +420,6 @@ const core = (() => {
     //   e.currentTarget.classList.toggle("active");
     // };
 
-
     // // ====== old version2
     // let note = document.querySelectorAll(".table td.note");
     // note.forEach(function (item) {
@@ -395,7 +431,6 @@ const core = (() => {
     //     btn.addEventListener("click", evt);
     //   }
     // });
-
 
     // //  ====== IntersectionObserver
     // const tables = document.querySelectorAll(".table");
@@ -456,9 +491,9 @@ const core = (() => {
         let nb = (datasetB + "").replace(/[-,\s\xA0]+/gi, "");
         let numA = parseFloat(na) + "";
         let numB = parseFloat(nb) + "";
-        
+
         if (numA === "NaN" || numB === "NaN" || na !== numA || nb !== numB) return false;
-        
+
         return sortType === "sortasc" ? parseFloat(na) - parseFloat(nb) : parseFloat(nb) - parseFloat(na);
       };
 
@@ -470,7 +505,7 @@ const core = (() => {
 
     // arrayReload : 정렬된 배열을 재렌더링
     const arrayReload = (array) => {
-      const data = array.map(row => ({
+      const data = array.map((row) => ({
         id: row.dataset.id,
         depth1: row.querySelector(".depth1").innerText,
         depth2: row.querySelector(".depth2").innerText,
@@ -482,7 +517,7 @@ const core = (() => {
         date: row.querySelector(".date").innerText,
         state: row.querySelector(".state").innerText,
         author: row.querySelector(".author").innerText,
-        note: row.querySelector(".note-memo").innerHTML
+        note: row.querySelector(".note-memo").innerHTML,
       }));
       console.log(data);
       const dataSort = [];
@@ -491,17 +526,14 @@ const core = (() => {
     };
 
     // 이벤트 리스너 설정
-    dateTh.forEach(item => {
+    dateTh.forEach((item) => {
       const asc = item.querySelector(".sortasc");
       const desc = item.querySelector(".sortdesc");
 
       asc.addEventListener("click", () => handleSortClick("sortasc", asc));
       desc.addEventListener("click", () => handleSortClick("sortdesc", desc));
     });
-
-  }
-
-  
+  };
 
   // 내부함수
   // 비동기 처리 setTimeout
@@ -550,6 +582,20 @@ const core = (() => {
     toggleRowSelection();
   };
 
+  // calculateDateDifference
+  const calculateDateDifference = (inputDate) => {
+    // 현재 날짜를 얻습니다.
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // 입력한 날짜를 파싱합니다.
+    const input = new Date(inputDate);
+    // 날짜 차이를 계산합니다.
+    const timeDifference = input.getTime() - today.getTime();
+    // 차이를 일 단위로 변환합니다.
+    const dayDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    return dayDifference;
+  };
+
   // publicFunction : 외부로 return
   const publicFunction = async () => {
     console.log("Public function called");
@@ -561,10 +607,10 @@ const core = (() => {
     initFilter();
     updateTableIndex();
     updateTableProgress();
-    copyTableContent();
     toggleNoteExpansion();
     toggleRowSelection();
     sortTableData();
+    // copyTableContent();
     // hideLoading();
   };
 
@@ -575,15 +621,10 @@ const core = (() => {
 
 core.publicFunction();
 
-
-
-
-
-
 // 로딩 시간 체크
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener("DOMContentLoaded", function () {
   // 시간체크
-  setTimeout(function() {
+  setTimeout(function () {
     // performance.timing 더이상 사용 안함
     // PerformanceNavigationTiming 이걸로 변경
     const ntime = performance.timing;
@@ -610,7 +651,6 @@ window.addEventListener('DOMContentLoaded', function() {
     console.log("dom : " + dom + "ms  >>>>>>>  DOM객체 로드 완료 시간");
     console.log("load : " + load + "ms  >>>>>>>  브라우저의 Load 이벤트 실행시간");
     console.log("pageEnd : " + pageEnd + "ms  >>>>>>>  서버에서 페이지를 받고 페이지를 로드하는데 걸린 시간");
-
   }, 6000);
 
   console.log("==================== start!! ====================");

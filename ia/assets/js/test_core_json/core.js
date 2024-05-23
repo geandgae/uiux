@@ -120,6 +120,10 @@ const core = (() => {
     await waitTime(0); // 비동기 처리를 위해 setTimeout 사용
     const btnMore = `<button type="button" class="btn" title="더보기"><i></i></button>`
     data.forEach((item) => {
+      // date
+      const recentDate = calculateDateDifference(item.date);
+      // console.log(recentDate);
+      // note
       const numNote = item.note.length;
       const hasMultipleNotes = numNote > 1;
       const multiClass = hasMultipleNotes ? "multi" : "";
@@ -128,7 +132,7 @@ const core = (() => {
         noteRow.push(`<p>${note}</p>`);
       });
       const tableRow = `
-        <tr data-id="${item.id}" data-sort="${item.date}">
+        <tr data-id="${item.id}" data-sort="${item.date}" class="${recentDate > -6 ? "recent" : ""}">
           <td class="index"><p></p></td>
           <td class="depth1"><p>${item.depth1}</p></td>
           <td class="depth2"><p>${item.depth2}</p></td>
@@ -214,7 +218,23 @@ const core = (() => {
     return data.filter((i) => i.toLowerCase().indexOf(query.toLowerCase()) > -1);
   };
 
-  // publicFunction : 외부로 return
+  // calculateDateDifference
+  const calculateDateDifference = (inputDate) => {
+    // 현재 날짜를 얻습니다.
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); 
+    // 입력한 날짜를 파싱합니다.
+    const input = new Date(inputDate);
+    // 날짜 차이를 계산합니다.
+    const timeDifference = input.getTime() - today.getTime();
+    // 차이를 일 단위로 변환합니다.
+    const dayDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    return dayDifference;
+  }
+
+
+
+  // publicFunction
   const publicFunction = async () => {
     console.log("Public function called");
     // fetchData 함수를 호출하여 데이터를 비동기적으로 불러오고 로딩 화면을 표시합니다.

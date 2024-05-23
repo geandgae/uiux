@@ -12,7 +12,7 @@ export let data_00 = [
     view_id: "view_id",
     view_name: "view_name",
     view_url: "aaa/aaa.url",
-    date: "2022-10-28",
+    date: "2024-05-28",
     state: st.fin,
     author: ctg.ct00.author,
     note: ["note1", "note2", "note3"],
