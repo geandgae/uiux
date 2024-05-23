@@ -4,8 +4,15 @@
 import {data_00} from "./data_00.js";
 import {data_01} from "./data_01.js";
 import {data_02} from "./data_02.js";
-// import {data_03} from "./data_03.js";
-// import {data_04} from "./data_04.js";
+import {data_03} from "./data_03.js";
+import {data_04} from "./data_04.js";
+import {data_05} from "./data_05.js";
+import {data_06} from "./data_06.js";
+import {data_07} from "./data_07.js";
+import {data_08} from "./data_08.js";
+import {data_09} from "./data_09.js";
+import {data_10} from "./data_10.js";
+
 
 // for (let item in data_00) {
 //   data_00[item].id = ctg.ct00.id;
@@ -36,6 +43,12 @@ export const dataArray = [
   ...data_00,
   ...data_01, 
   ...data_02,
-  // ...data_03,
-  // ...data_04,
+  ...data_03,
+  ...data_04,
+  ...data_05,
+  ...data_06,
+  ...data_07,
+  ...data_08,
+  ...data_09,
+  ...data_10,
 ];

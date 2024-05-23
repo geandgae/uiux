@@ -34,38 +34,38 @@ export const ctg = {
     title : "테이블 02",
     author : at.u_02,
   },
-  // ct03 : {
-  //   id : "table_03",
-  //   title : "테이블 03",
-  // },
-  // ct04 : {
-  //   id : "table_04",
-  //   title : "테이블 04",
-  // },
-  // ct05 : {
-  //   id : "table_05",
-  //   title : "테이블 05",
-  // },
-  // ct06 : {
-  //   id : "table_06",
-  //   title : "테이블 06",
-  // },
-  // ct07 : {
-  //   id : "table_07",
-  //   title : "테이블 07",
-  // },
-  // ct08 : {
-  //   id : "table_08",
-  //   title : "테이블 08",
-  // },
-  // ct09 : {
-  //   id : "table_09",
-  //   title : "테이블 09",
-  // },
-  // ct10 : {
-  //   id : "table_10",
-  //   title : "테이블 10",
-  // },
+  ct03 : {
+    id : "table_03",
+    title : "테이블 03",
+  },
+  ct04 : {
+    id : "table_04",
+    title : "테이블 04",
+  },
+  ct05 : {
+    id : "table_05",
+    title : "테이블 05",
+  },
+  ct06 : {
+    id : "table_06",
+    title : "테이블 06",
+  },
+  ct07 : {
+    id : "table_07",
+    title : "테이블 07",
+  },
+  ct08 : {
+    id : "table_08",
+    title : "테이블 08",
+  },
+  ct09 : {
+    id : "table_09",
+    title : "테이블 09",
+  },
+  ct10 : {
+    id : "table_10",
+    title : "테이블 10",
+  },
   // ct11 : {
   //   id : "table_11",
   //   title : "테이블 11",

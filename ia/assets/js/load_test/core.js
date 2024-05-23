@@ -25,6 +25,7 @@ import { dataArray } from "./data_set.js";
 // 변경할 점 data_options 변수 변경 ctg(카테고리) > initFilter, initTable / author(사용자) > 필터사용 / st(진행상태) > 상태별 개수
 // 상태값 : 진행/ing   보류/삭제/del     대기/검수/wait/chk     완료/수정/fin
 // 로딩테스트 주석은 비동기처리 / 공통함수로 일괄 처리
+// 메모 방식 변경... 레이어나 툴팁형태
 
 // Core module
 const core = (() => {
@@ -106,21 +107,10 @@ const core = (() => {
   };
 
   // renderTable : initTable에서 생성한 article에 dataOrign을 뿌림(테이블 실제 데이터 생성)
-  const renderTable = (data) => {
-    const article = document.querySelectorAll(".article");
-    article.forEach((item) => {
-      const id = item.getAttribute("id");
-      const tableBody = item.querySelector("tbody");
-      const filteredData = filterData(data, id);
-      tableBody.innerHTML = filteredData.join("");
-    });
-  };
-
-  // renderTable 함수 업데이트
-  const renderTableUpd = async (data) => {
+  const renderTable =  async (data) => {
     displayLoading();
     const article = document.querySelectorAll(".article");
-    await new Promise((resolve) => setTimeout(resolve, 0)); // 비동기 처리를 위해 setTimeout 사용
+    await waitTime(500); // 비동기 처리를 위해 setTimeout 사용
     article.forEach((item) => {
       const id = item.getAttribute("id");
       const tableBody = item.querySelector("tbody");
@@ -136,7 +126,7 @@ const core = (() => {
     initAuthorOptions();
     initStateOptions();
     initCategoryButtons();
-    initCategoryFilter();
+    categoryFilter();
     initSelectFilter();
   };
 
@@ -162,7 +152,7 @@ const core = (() => {
     stateSelect.innerHTML = StateOptions.join("");
   };
 
-  // initCategoryButtons : 카테고리 버튼 초기화 : 카테고리 버튼 생성 삭제할 수도있음
+  // initCategoryButtons : 카테고리 초기화
   const initCategoryButtons = () => {
     const categoryContainer = document.querySelector(".category");
     const categorybuttons = [`<li><button type="button" class="btn" id="table_all">전체보기</button></li>`];
@@ -176,20 +166,22 @@ const core = (() => {
     }
   };
 
-  // initCategoryFilter : 카테고리 필터 초기화
-  const initCategoryFilter = () => {
+  // categoryFilter : 카테고리 필터
+  const categoryFilter = () => {
     const categoryButtons = document.querySelectorAll(".category .btn");
     const articles = document.querySelectorAll(".article");
 
-    const filterByCategory = (event) => {
+    const filterByCategory = async (event) => {
+      displayLoading();
       const categoryId = event.currentTarget.id;
-
+      await waitTime(500); // 비동기 처리를 위해 setTimeout 사용
       articles.forEach((item) => {
         item.classList.add("hide");
         if (categoryId === item.id || categoryId === "table_all") {
           item.classList.remove("hide");
         }
       });
+      hideLoading();
     };
 
     categoryButtons.forEach((item) => {
@@ -207,6 +199,8 @@ const core = (() => {
       dataClone = filterData(dataOrign, keyword);
       // renderTable : 테이블을 dataClone으로 다시 그림
       renderTable(dataClone);
+      // dataClone 테이블을 렌더링한 후 이벤트 리스너 다시 설정
+      attachEventListeners();
     };
 
     // 선택 옵션 실행
@@ -221,59 +215,6 @@ const core = (() => {
     // 검색 입력값 실행
     input.addEventListener("keyup", () => {
       filterBySelect();
-    });
-  };
-
-  // initCategoryFilter 함수 업데이트
-  const initCategoryFilterUpd = () => {
-    const categoryButtons = document.querySelectorAll(".category .btn");
-    const articles = document.querySelectorAll(".article");
-
-    const filterByCategory = async (event) => {
-      displayLoading();
-      const categoryId = event.currentTarget.id;
-
-      await new Promise((resolve) => setTimeout(resolve, 0)); // 비동기 처리를 위해 setTimeout 사용
-
-      articles.forEach((item) => {
-        item.classList.add("hide");
-        if (categoryId === item.id || categoryId === "table_all") {
-          item.classList.remove("hide");
-        }
-      });
-
-      hideLoading();
-    };
-
-    categoryButtons.forEach((item) => {
-      item.addEventListener("click", filterByCategory);
-    });
-  };
-
-  // initSelectFilter 함수 업데이트
-  const initSelectFilterUpd = () => {
-    const selects = document.querySelectorAll(".filter select");
-    const input = document.querySelector(".filter input[type=text]");
-
-    const filterBySelect = async () => {
-      displayLoading();
-      const keyword = input.value;
-      dataClone = filterData(dataOrign, keyword);
-
-      await renderTable(dataClone);
-      hideLoading();
-    };
-
-    selects.forEach((item) => {
-      item.addEventListener("change", async function () {
-        const option = item.options[item.selectedIndex].value;
-        input.value = option;
-        await filterBySelect();
-      });
-    });
-
-    input.addEventListener("keyup", async () => {
-      await filterBySelect();
     });
   };
 
@@ -426,65 +367,70 @@ const core = (() => {
     //   e.currentTarget.classList.toggle("active");
     // };
 
+    // old version
     // const noteToggleEvt = function() {
-    //   console.log("noteToggleEvt!!!!! --- loading");
     //   let note = document.querySelectorAll(".table td.note");
-    //   if (note) {
-    //     note.forEach(function (item) {
-    //       let memo = item.querySelectorAll(".note-memo p");
-    //       let btn = item.querySelector(".btn");
-    //       if (memo.length > 1) {
-    //         item.closest(".note").classList.add("multi");
-    //         btn.addEventListener("click", evt);
-    //       }
-    //     });
-    //   }
+    //   note.forEach(function (item) {
+    //     console.log(note)
+    //     let memo = item.querySelectorAll(".note-memo p");
+    //     let btn = item.querySelector(".btn");
+    //     if (memo.length > 1) {
+    //       item.closest(".note").classList.add("multi");
+    //       btn.addEventListener("click", evt);
+    //     }
+    //   });
     // };
     // noteToggleEvt();
 
-    const multi = document.querySelectorAll(".note.multi");
 
+    // 수정중
+    const multi = document.querySelectorAll(".note.multi");
+    console.log(multi);
     multi.forEach((item) => {
       item.addEventListener("click", () => {
         item.classList.toggle("active");
       });
     });
 
-    const tables = document.querySelectorAll(".table");
 
-    const toggleEvent = (button) => {
-      const note = button.closest(".note");
-      note.classList.toggle("active");
-      button.classList.toggle("active");
-    };
+    // // IntersectionObserver
+    // const tables = document.querySelectorAll(".table");
 
-    const handleIntersection = (entries, observer) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const button = entry.target.querySelector(".btn");
-          if (button) {
-            button.addEventListener("click", () => toggleEvent(button));
-          }
-          observer.unobserve(entry.target);
-        }
-      });
-    };
+    // const toggleEvent = (button) => {
+    //   const note = button.closest(".note");
+    //   note.classList.toggle("active");
+    //   button.classList.toggle("active");
+    // };
 
-    const observer = new IntersectionObserver(handleIntersection, {
-      root: null, // Use the viewport as the root
-      rootMargin: "0px",
-      threshold: 0.1, // Trigger when at least 10% of the element is visible
-    });
+    // const handleIntersection = (entries, observer) => {
+    //   entries.forEach((entry) => {
+    //     if (entry.isIntersecting) {
+    //       const button = entry.target.querySelector(".btn");
+    //       if (button) {
+    //         button.addEventListener("click", () => toggleEvent(button));
+    //       }
+    //       observer.unobserve(entry.target);
+    //     }
+    //   });
+    // };
 
-    tables.forEach((table) => {
-      const noteCells = table.querySelectorAll(".note.multi");
-      noteCells.forEach((noteCell) => {
-        observer.observe(noteCell);
-      });
-    });
+    // const observer = new IntersectionObserver(handleIntersection, {
+    //   root: null, // Use the viewport as the root
+    //   rootMargin: "0px",
+    //   threshold: 0.1, // Trigger when at least 10% of the element is visible
+    // });
+
+    // tables.forEach((table) => {
+    //   const noteCells = table.querySelectorAll(".note.multi");
+    //   noteCells.forEach((noteCell) => {
+    //     observer.observe(noteCell);
+    //   });
+    // });
+
+
   };
 
-  // toggleRowSelection
+  // toggleRowSelection : 테이블 열 선택
   const toggleRowSelection = () => {
     const toggleSelection = (element) => {
       element.classList.toggle("select");
@@ -498,7 +444,12 @@ const core = (() => {
     });
   };
 
+  
+
   // 내부함수
+  // 비동기 처리 setTimeout
+  const waitTime = (timeToDelay) => new Promise((resolve) => setTimeout(resolve, timeToDelay));
+
   // filterData : renderTable, selectFilter 사용
   const filterData = (data, query) => {
     return data.filter((i) => i.toLowerCase().indexOf(query.toLowerCase()) > -1);
@@ -523,37 +474,31 @@ const core = (() => {
     }, 500);
   };
 
-  // 로딩 표시
+  // displayLoading : 로딩 표시
   const displayLoading = () => {
     loadDiv.classList.add("active");
   };
 
-  // 로딩 숨김
+  // hideLoading : 로딩 숨김
   const hideLoading = () => {
     loadDiv.classList.remove("active");
   };
 
-  // publicFunction 함수 업데이트
-  const publicFunctionUpd = async () => {
-    displayLoading();
-    initData(dataArray, dataOrign);
-    hideLoading();
-
-    initTable();
-    await renderTable(dataOrign);
-    initFilter();
-    updateTableIndex();
-    updateTableProgress();
+  // attachEventListeners : 이벤트 리스너를 필터된 테이블(dataClone)에 다시 바인딩
+  const attachEventListeners = () => {
+    // updateTableIndex();
+    // updateTableProgress();
+    copyTableContent();
     toggleNoteExpansion();
     toggleRowSelection();
-    copyTableContent();
   };
 
-  const publicFunction = () => {
+  // publicFunction : 외부로 return
+  const publicFunction = async () => {
     console.log("Public function called");
     initData(dataArray, dataOrign);
     initTable();
-    renderTable(dataOrign);
+    await renderTable(dataOrign);
 
     // utils
     initFilter();
@@ -562,6 +507,7 @@ const core = (() => {
     toggleNoteExpansion();
     toggleRowSelection();
     copyTableContent();
+    // hideLoading();
   };
 
   return {
@@ -571,41 +517,43 @@ const core = (() => {
 
 core.publicFunction();
 
-// 숨김처리
-// // 로딩 시간 체크
-// window.addEventListener('DOMContentLoaded', function() {
-//   loadDiv.classList.remove("active");
 
-//   // 시간체크
-//   setTimeout(function() {
-//     // performance.timing 더이상 사용 안함
-//     // PerformanceNavigationTiming 이걸로 변경
-//     const ntime = performance.timing;
-//     const total = ntime.loadEventEnd - ntime.navigationStart; //전체 소요시간
-//     const redirect = ntime.redirectEnd - ntime.redirectStart; // 동일 origin에서의 redirect 시간
-//     const cache = ntime.domainLookupStart - ntime.fetchStart; // cache 시간
-//     const dnslookup = ntime.domainLookupEnd - ntime.domainLookupStart; //DNS Lookup 시간
-//     const connect = ntime.connectEnd - ntime.connectStart; // 웹서버 연결 시간
-//     const request = ntime.responseStart - ntime.requestStart; // 요청 소요 시간
-//     const response = ntime.responseEnd - ntime.responseStart; // 응답 데이터를 모두 받은 시간
-//     const dom = ntime.domComplete - ntime.domLoading; // DOM객체 생성 시간 *******************
-//     const load = ntime.loadEventEnd - ntime.loadEventStart; // 브라우저의 Load 이벤트 실행시간
-//     const pageEnd = ntime.loadEventEnd - ntime.responseEnd; //  서버에서 페이지를 받고 페이지를 로드하는데 걸린 시간
-//     // var networkDelay = ntime.responseEnd - ntime.fetchStart; //  네트워크 지연 시간
-//     console.log(ntime);
 
-//     console.log("total : " + total + "ms  >>>>>>>  전체 소요시간");
-//     console.log("redirect : " + redirect + "ms  >>>>>>>   동일 origin에서의 redirect 시간");
-//     console.log("cache : " + cache + "ms   >>>>>>>  cache 시간");
-//     console.log("dnslookup : " + dnslookup + "ms  >>>>>>>  DNS Lookup 시간");
-//     console.log("connect : " + connect + "ms  >>>>>>>  웹서버 연결 시간");
-//     console.log("request : " + request + "ms  >>>>>>>  요청 소요 시간");
-//     console.log("response : " + response + "ms  >>>>>>>  첫 응답으로 부터 응답 데이터를 모두 받은 시간");
-//     console.log("dom : " + dom + "ms  >>>>>>>  DOM객체 로드 완료 시간");
-//     console.log("load : " + load + "ms  >>>>>>>  브라우저의 Load 이벤트 실행시간");
-//     console.log("pageEnd : " + pageEnd + "ms  >>>>>>>  서버에서 페이지를 받고 페이지를 로드하는데 걸린 시간");
 
-//   }, 6000);
 
-//   console.log("==================== start!! ====================");
-// });
+
+// 로딩 시간 체크
+window.addEventListener('DOMContentLoaded', function() {
+  // 시간체크
+  setTimeout(function() {
+    // performance.timing 더이상 사용 안함
+    // PerformanceNavigationTiming 이걸로 변경
+    const ntime = performance.timing;
+    const total = ntime.loadEventEnd - ntime.navigationStart; //전체 소요시간
+    const redirect = ntime.redirectEnd - ntime.redirectStart; // 동일 origin에서의 redirect 시간
+    const cache = ntime.domainLookupStart - ntime.fetchStart; // cache 시간
+    const dnslookup = ntime.domainLookupEnd - ntime.domainLookupStart; //DNS Lookup 시간
+    const connect = ntime.connectEnd - ntime.connectStart; // 웹서버 연결 시간
+    const request = ntime.responseStart - ntime.requestStart; // 요청 소요 시간
+    const response = ntime.responseEnd - ntime.responseStart; // 응답 데이터를 모두 받은 시간
+    const dom = ntime.domComplete - ntime.domLoading; // DOM객체 생성 시간 *******************
+    const load = ntime.loadEventEnd - ntime.loadEventStart; // 브라우저의 Load 이벤트 실행시간
+    const pageEnd = ntime.loadEventEnd - ntime.responseEnd; //  서버에서 페이지를 받고 페이지를 로드하는데 걸린 시간
+    // var networkDelay = ntime.responseEnd - ntime.fetchStart; //  네트워크 지연 시간
+    console.log(ntime);
+
+    console.log("total : " + total + "ms  >>>>>>>  전체 소요시간");
+    console.log("redirect : " + redirect + "ms  >>>>>>>   동일 origin에서의 redirect 시간");
+    console.log("cache : " + cache + "ms   >>>>>>>  cache 시간");
+    console.log("dnslookup : " + dnslookup + "ms  >>>>>>>  DNS Lookup 시간");
+    console.log("connect : " + connect + "ms  >>>>>>>  웹서버 연결 시간");
+    console.log("request : " + request + "ms  >>>>>>>  요청 소요 시간");
+    console.log("response : " + response + "ms  >>>>>>>  첫 응답으로 부터 응답 데이터를 모두 받은 시간");
+    console.log("dom : " + dom + "ms  >>>>>>>  DOM객체 로드 완료 시간");
+    console.log("load : " + load + "ms  >>>>>>>  브라우저의 Load 이벤트 실행시간");
+    console.log("pageEnd : " + pageEnd + "ms  >>>>>>>  서버에서 페이지를 받고 페이지를 로드하는데 걸린 시간");
+
+  }, 6000);
+
+  console.log("==================== start!! ====================");
+});
