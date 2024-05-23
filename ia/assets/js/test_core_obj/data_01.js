@@ -15,7 +15,7 @@ export let data_01 = [
     date: "2022-10-28",
     state: st.fin,
     author: ctg.ct01.author,
-    note: "<p>note2022-11-08</p>",
+    note: ["note1", "note2"],
   },
   {
     id: ctg.ct01.id,
@@ -29,7 +29,7 @@ export let data_01 = [
     date: "2022-11-03",
     state: st.wtn,
     author: ctg.ct01.author,
-    note: "<p>note1</p><p>note2</p>",
+    note: ["note1", "note2"],
   },
   {
     id: ctg.ct01.id,
@@ -43,6 +43,6 @@ export let data_01 = [
     date: "2024-05-01",
     state: "",
     author: ctg.ct01.author,
-    note: "<p>note1</p><p>note2</p>",
+    note: ["note1", "note2", "note3"],
   },
 ]

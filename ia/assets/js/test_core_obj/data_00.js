@@ -15,6 +15,6 @@ export let data_00 = [
     date: "2022-10-28",
     state: st.fin,
     author: ctg.ct00.author,
-    note: "<p>note1</p><p>note2</p><p>note3</p>",
+    note: ["note1", "note2", "note3"],
   },
 ]

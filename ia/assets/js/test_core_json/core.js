@@ -70,9 +70,10 @@ const core = (() => {
   // 제이슨 데이터 불러오기
   // 불러올 JSON 파일 경로 배열
   const jsonFilePaths = [
-    "./assets/js/test_core_json/data_00.json",
-    "./assets/js/test_core_json/data_01.json",
+    // "./assets/js/test_core_json/data_00.json",
+    // "./assets/js/test_core_json/data_01.json",
     "./assets/js/test_core_json/data_02.json",
+    "./assets/js/test_core_json/data_03.json",
   ];
 
   // 여러 개의 데이터를 비동기적으로 불러오고 로딩 화면을 표시하는 함수
@@ -117,12 +118,15 @@ const core = (() => {
   const initData = async (data, out) => {
     displayLoading();
     await waitTime(0); // 비동기 처리를 위해 setTimeout 사용
+    const btnMore = `<button type="button" class="btn" title="더보기"><i></i></button>`
     data.forEach((item) => {
-      const pTags = item.note.match(/<p>/g) || [];
-      const numPTags = pTags.length;
-      // const hasMultipleNotes = item.note.match(/<p>/g).length > 1;
-      const hasMultipleNotes = numPTags > 1;
+      const numNote = item.note.length;
+      const hasMultipleNotes = numNote > 1;
       const multiClass = hasMultipleNotes ? "multi" : "";
+      let noteRow = [];
+      item.note.forEach((note) => {
+        noteRow.push(`<p>${note}</p>`);
+      });
       const tableRow = `
         <tr data-id="${item.id}" data-sort="${item.date}">
           <td class="index"><p></p></td>
@@ -137,8 +141,8 @@ const core = (() => {
           <td class="state"><p>${item.state.trim() === "" ? "대기" : item.state}</p></td>
           <td class="author"><p>${item.author}</p></td>
           <td class="note ${multiClass}">
-            <button type="button" class="btn" title="더보기"><i></i></button>
-            <div class="note-memo target">${item.note}</div>
+            ${multiClass.trim()  === "" ? "" : btnMore}
+            <div class="note-memo target">${noteRow.join("")}</div>
           </td>
         </tr>
       `;
@@ -236,6 +240,10 @@ const core = (() => {
 })();
 
 core.publicFunction();
+
+
+
+
 
 // 로딩 시간 체크
 window.addEventListener("DOMContentLoaded", function () {

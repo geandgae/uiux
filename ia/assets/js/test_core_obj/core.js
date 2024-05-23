@@ -34,12 +34,20 @@ const core = (() => {
 
   // initData : dataArray의 데이터를 테이블 형식으로 변환해서 dataOrign 배열에 저장
   const initData = (data, out) => {
+    const btnMore = `<button type="button" class="btn" title="더보기"><i></i></button>`
     data.forEach((item) => {
-      const pTags = item.note.match(/<p>/g) || [];
-      const numPTags = pTags.length;
+      // const pTags = item.note.match(/<p>/g) || [];
+      // const numPTags = pTags.length;
       // const hasMultipleNotes = item.note.match(/<p>/g).length > 1;
-      const hasMultipleNotes = numPTags > 1;
+      // const hasMultipleNotes = numPTags > 1;
+      // const multiClass = hasMultipleNotes ? "multi" : "";
+      const numNote = item.note.length;
+      const hasMultipleNotes = numNote > 1;
       const multiClass = hasMultipleNotes ? "multi" : "";
+      let noteRow = [];
+      item.note.forEach((note) => {
+        noteRow.push(`<p>${note}</p>`);
+      });
       const tableRow = `
         <tr data-id="${item.id}" data-sort="${item.date}">
           <td class="index"><p></p></td>
@@ -54,8 +62,8 @@ const core = (() => {
           <td class="state"><p>${item.state.trim() === "" ? "대기" : item.state}</p></td>
           <td class="author"><p>${item.author}</p></td>
           <td class="note ${multiClass}">
-            <button type="button" class="btn" title="더보기"><i></i></button>
-            <div class="note-memo target">${item.note}</div>
+            ${multiClass.trim()  === "" ? "" : btnMore}
+            <div class="note-memo target">${noteRow.join("")}</div>
           </td>
         </tr>
       `;
