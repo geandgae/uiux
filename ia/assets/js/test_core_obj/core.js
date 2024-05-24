@@ -218,7 +218,7 @@ const core = (() => {
 
     // 선택 옵션 실행
     selects.forEach((item) => {
-      item.addEventListener("change", function () {
+      item.addEventListener("change", () => {
         const option = item.options[item.selectedIndex].value;
         input.value = option;
         filterBySelect();
@@ -317,78 +317,44 @@ const core = (() => {
     progress.innerHTML = progressHTML;
   };
 
-  let copyTableContentEnabled = false; // copyTableContent 활성화 상태 변수
-  let copyTableContentTimeout; // 이전 실행 취소를 위한 타임아웃 변수
-
-  // copyTableContent 함수를 활성화/비활성화하는 함수
-  const toggleCopyTableContent = () => {
-    copyTableContentEnabled = !copyTableContentEnabled;
-    console.log(`copyTableContent is now ${copyTableContentEnabled ? "enabled" : "disabled"}.`);
-  };
-
-  // toggleCopyTableContent 함수를 호출하여 활성화/비활성화 상태를 변경합니다.
-  document.querySelector(".mode-copy").addEventListener("click", () => {
-    copyTableContentEnabled = true;
-    copyTableContent();
-    console.log(copyTableContentEnabled);
-  });
-  document.querySelector(".mode-normal").addEventListener("click", () => {
-    copyTableContentEnabled = false;
-    copyTableContent();
-    console.log(copyTableContentEnabled);
-  });
-
   // copyTableContent : 테이블 내용을 복사하는 함수
   const copyTableContent = () => {
-    // 이전 실행을 취소합니다.
-    clearTimeout(copyTableContentTimeout);
-
-
-    // 복사 기능이 비활성화되어 있으면 함수를 종료합니다.
-    if (!copyTableContentEnabled) {
-      return;
-    }
+    const contents = document.querySelector(".contents");
     
+    // 클립보드에 텍스트를 복사하는 함수
+    const copyTextToClipboard = async (element) => {
+      try {
+        // 대상 요소의 텍스트 내용을 클립보드에 복사 시도
+        await navigator.clipboard.writeText(element.textContent);
 
-    
-    copyTableContentTimeout = setTimeout(() => {
-      // 클립보드에 텍스트를 복사하는 함수
-      const copyTextToClipboard = async (element) => {
-        try {
-          // 대상 요소의 텍스트 내용을 클립보드에 복사 시도
-          await navigator.clipboard.writeText(element.textContent);
+        // 복사 성공 메시지와 복사된 내용을 콘솔에 출력
+        console.log("복사 완료");
+        console.log(element.textContent);
 
-          // 복사 성공 메시지와 복사된 내용을 콘솔에 출력
-          console.log("복사 완료");
-          console.log(element.textContent);
+        // 복사된 내용을 변수에 저장
+        const copyContent = element.textContent;
 
-          // 복사된 내용을 변수에 저장
-          const copyContent = element.textContent;
+        // 복사된 내용으로 토스트 팝업 호출 (setToast 함수가 정의되어 있어야 합니다)
+        setToast(copyContent);
+      } catch (error) {
+        // 복사 실패 메시지와 시도한 내용을 콘솔에 출력
+        console.log("복사 실패");
+        console.log(element.textContent);
 
-          // 복사된 내용으로 토스트 팝업 호출 (setToast 함수가 정의되어 있어야 합니다)
-          setToast(copyContent);
-        } catch (error) {
-          // 복사 실패 메시지와 시도한 내용을 콘솔에 출력
-          console.log("복사 실패");
-          console.log(element.textContent);
+        // 에러 메시지를 콘솔에 출력
+        console.error(error);
+      }
+    };
 
-          // 에러 메시지를 콘솔에 출력
-          console.error(error);
-        }
-      };
+    // 모든 .table td p 요소를 선택
+    const elements = document.querySelectorAll(".contents .table td p");
 
-      // 모든 .table td p 요소를 선택
-      const elements = document.querySelectorAll(".table td p");
-
-      // 각 요소에 클릭 이벤트 리스너를 추가
-      elements.forEach((item) => {
-        item.addEventListener("click", function () {
-          // 클릭된 요소의 텍스트를 클립보드에 복사
-          copyTextToClipboard(item);
-        });
+    // 각 요소에 클릭 이벤트 리스너를 추가
+    elements.forEach((item) => {
+      item.addEventListener("click", () => {
+        copyTextToClipboard(item)
       });
-    },0);
-
+    });
   };
 
   // toggleNoteExpansion : 노트 토글 기능
@@ -610,7 +576,7 @@ const core = (() => {
     toggleNoteExpansion();
     toggleRowSelection();
     sortTableData();
-    // copyTableContent();
+    copyTableContent();
     // hideLoading();
   };
 
