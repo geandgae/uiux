@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>drag</title>
+    <link href="./assets/css/reset.css" type="text/css" media="all" rel="stylesheet" />
+    <script type="module" defer src="./assets/js/drag/drag.js"></script>
+  </head>
+  <style>
+    * {
+      font-size: 10px;
+    }
+    .draggable {
+      width: 100px;
+      padding: 10px;
+      border: 1px solid #000;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      display: none;
+    }
+    .dropzone {
+      width: 100px;
+      height: 100px;
+      border: 2px dashed #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      display: none;
+    }
+
+    .selectable {
+      width: 400px;
+      padding: 10px;
+      border: 1px solid #000;
+      margin-bottom: 20px;
+    }
+
+    .toast {
+      display: none;
+    }
+    .toast.active {
+      display: block;
+    }
+  </style>
+  <body>
+
+    <div id="copyButton" class="toast">
+      <button class="copy">copy</button>
+      <button class="etc">etc</button>
+    </div>
+
+    <div id="textContainer" class="selectable">
+      Select any part of this text to copy it automatically to the clipboard.
+    </div>
+
+    <div id="source" class="draggable" draggable="true">
+      draggable!!
+    </div>
+  
+    <div id="target" class="dropzone">
+      dropzone!!
+    </div>
+
+  </body>
+</html>
