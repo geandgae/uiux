@@ -319,13 +319,13 @@ const core = (() => {
 
   // copyTableContent : 테이블 내용을 복사하는 함수
   const copyTableContent = () => {
-    const contents = document.querySelector(".contents");
-    
     // 클립보드에 텍스트를 복사하는 함수
     const copyTextToClipboard = async (element) => {
       try {
         // 대상 요소의 텍스트 내용을 클립보드에 복사 시도
         await navigator.clipboard.writeText(element.textContent);
+        // tr 복사할때 한줄처리
+        // await navigator.clipboard.writeText(element.textContent.replace(/\r?\n|\r/g, ' '));
 
         // 복사 성공 메시지와 복사된 내용을 콘솔에 출력
         console.log("복사 완료");
@@ -348,6 +348,8 @@ const core = (() => {
 
     // 모든 .table td p 요소를 선택
     const elements = document.querySelectorAll(".contents .table td p");
+    // tr 선택
+    // const elements = document.querySelectorAll(".contents .table tbody tr");
 
     // 각 요소에 클릭 이벤트 리스너를 추가
     elements.forEach((item) => {
