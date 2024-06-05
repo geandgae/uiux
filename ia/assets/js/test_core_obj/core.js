@@ -485,7 +485,7 @@ const core = (() => {
         date: row.querySelector(".date").innerText,
         state: row.querySelector(".state").innerText,
         author: row.querySelector(".author").innerText,
-        note: row.querySelector(".note-memo").innerHTML,
+        note: row.querySelectorAll(".note-memo p").innerHTML,
       }));
       console.log(data);
       const dataSort = [];
