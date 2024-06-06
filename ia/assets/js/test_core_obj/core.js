@@ -529,7 +529,7 @@ const core = (() => {
     outland.innerHTML = toast;
     setTimeout(() => {
       outland.innerHTML = "";
-    }, 500);
+    }, 1000);
   };
 
   // displayLoading : 로딩 표시
