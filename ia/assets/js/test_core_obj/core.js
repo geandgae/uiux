@@ -131,6 +131,7 @@ const core = (() => {
       tableBody.innerHTML = filteredData.join("");
     });
     hideLoading();
+    attachEventListeners();
   };
 
   // utils
@@ -213,7 +214,6 @@ const core = (() => {
       // renderTable : 테이블을 dataClone으로 다시 그림
       renderTable(dataClone);
       // dataClone 테이블을 렌더링한 후 이벤트 리스너 다시 설정
-      attachEventListeners();
     };
 
     // 선택 옵션 실행
@@ -470,7 +470,7 @@ const core = (() => {
       const sortedArray = rows.sort(sortNum);
       arrayReload(sortedArray, tbody);
     };
-
+    
     // arrayReload : 정렬된 배열을 재렌더링
     const arrayReload = (array) => {
       const data = array.map((row) => ({
@@ -485,12 +485,13 @@ const core = (() => {
         date: row.querySelector(".date").innerText,
         state: row.querySelector(".state").innerText,
         author: row.querySelector(".author").innerText,
-        note: row.querySelectorAll(".note-memo p"),
+        note: Array.from(row.querySelectorAll(".note-memo p")).map(p => p.innerText),
       }));
       console.log(data);
       const dataSort = [];
       initData(data, dataSort);
       renderTable(dataSort);
+      
     };
 
     // 이벤트 리스너 설정
@@ -543,8 +544,8 @@ const core = (() => {
 
   // attachEventListeners : 이벤트 리스너를 필터된 테이블(dataClone)에 다시 바인딩
   const attachEventListeners = () => {
-    // updateTableIndex();
-    // updateTableProgress();
+    updateTableIndex();
+    updateTableProgress();
     copyTableContent();
     toggleNoteExpansion();
     toggleRowSelection();
@@ -573,12 +574,7 @@ const core = (() => {
 
     // utils
     initFilter();
-    updateTableIndex();
-    updateTableProgress();
-    toggleNoteExpansion();
-    toggleRowSelection();
     sortTableData();
-    copyTableContent();
     // hideLoading();
   };
 
