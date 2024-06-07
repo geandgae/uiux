@@ -9,12 +9,12 @@
     "view_name": "view_name",
     "view_url": "aaa/aaa.url",
     "date": "2024-05-17",
-    "state": "fin",
-    "author": "ct00_author",
+    "state": "수정",
+    "author": "사용자00",
     "note": [
-      "2024-05-23 mod",
-      "2024-05-23 mod",
-      "2024-05-23 mod"
+      "2024-05-23",
+      "2024-05-23",
+      "2024-05-23"
     ]
   },
   { 
@@ -27,8 +27,8 @@
     "view_name": "view_name",
     "view_url": "aaa/aaa.url",
     "date": "2024-05-18",
-    "state": "fin",
-    "author": "ct00_author",
+    "state": "대기",
+    "author": "사용자00",
     "note": []
   }
 ]
