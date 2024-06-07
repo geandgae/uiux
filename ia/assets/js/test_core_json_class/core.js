@@ -1,19 +1,12 @@
 "use strict";
 
 class Core {
-  constructor() {
+  constructor(ctg, jsonFilePaths) {
     this.dataJson = [];
     this.dataOrign = [];
-    this.ctg = {
-      ct00: { id: "table_00", title: "table_00" },
-      ct01: { id: "table_01", title: "table_01" },
-      ct02: { id: "table_02", title: "table_02" },
-    };
+    this.ctg = ctg;
     this.isLoading = false;
-    this.jsonFilePaths = [
-      "./assets/js/test_core_json_class/data_00.json",
-      "./assets/js/test_core_json_class/data_01.json",
-    ];
+    this.jsonFilePaths = jsonFilePaths;
   }
 
   displayLoading() {
@@ -72,7 +65,7 @@ class Core {
           <td class="state"><p>${item.state.trim() === "" ? "대기" : item.state}</p></td>
           <td class="author"><p>${item.author}</p></td>
           <td class="note ${multiClass}">
-            ${multiClass.trim()  === "" ? "" : btnMore}
+            ${multiClass.trim() === "" ? "" : btnMore}
             <div class="note-memo target">${noteRow.join("")}</div>
           </td>
         </tr>
@@ -87,10 +80,8 @@ class Core {
     const articles = Object.values(this.ctg).map((category) => {
       const { id, title } = category;
       return `
-        <!-- article -->
         <article class="article" id="${id}">
           <h2>${title}</h2>
-          <!-- table -->
           <table class="table">
             <caption>${title}</caption>
             <thead>
@@ -111,9 +102,7 @@ class Core {
             </thead>
             <tbody></tbody>
           </table>
-          <!-- //table -->
         </article>
-        <!-- //article -->
       `;
     });
     container.innerHTML = articles.join("");
@@ -148,9 +137,9 @@ class Core {
     return Math.floor(timeDifference / (1000 * 60 * 60 * 24));
   }
 
-  async publicFunction() {
+  async publicFunction(data) {
     console.log("Public function called");
-    this.dataJson = await this.fetchData(this.jsonFilePaths);
+    this.dataJson = data || await this.fetchData(this.jsonFilePaths);
     if (this.dataJson) {
       console.log("데이터를 성공적으로 불러왔습니다:");
       await this.initData(this.dataJson, this.dataOrign);
@@ -162,5 +151,16 @@ class Core {
   }
 }
 
-const core = new Core();
+// ctg와 jsonFilePaths를 외부에서 주입받습니다.
+const ctg = {
+  ct00: { id: "table_00", title: "table_00" },
+  ct01: { id: "table_01", title: "table_01" },
+};
+const jsonFilePaths = [
+  "./assets/js/test_core_json_class/data_00.json",
+  "./assets/js/test_core_json_class/data_01.json",
+];
+
+// 새로운 인스턴스를 생성하고 데이터를 매개변수로 전달합니다.
+const core = new Core(ctg, jsonFilePaths);
 core.publicFunction();
