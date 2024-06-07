@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>prism</title>
+    <link href="./assets/css/reset.css" type="text/css" media="all" rel="stylesheet" />
+    <link href="./assets/js/prism/prism.css" type="text/css" media="all" rel="stylesheet" />
+    <script defer src="./assets/js/prism/prism.min.js"></script>
+  </head>
+  <style>
+    .code-test {
+      margin: 30px;
+    }
+  </style>
+  <body>
+    <div class="code-test">
+      <h5>language-markup</h5>
+      <pre class="line-numbers">
+        <code class="language-markup">
+          &LT;!-- container --&GT;
+            &LT;main class="container"&GT;
+              &LT;!-- gnb --&GT;
+              &LT;section class="gnb"&GT;
+                &LT;!-- category --&GT;
+                &LT;ul class="category"&GT;&LT;/ul&GT;
+                &LT;!-- //category --&GT;
+              &LT;/section&GT;
+              &LT;!-- //gnb --&GT;
+              &LT;!-- contents : data view --&GT;
+              &LT;section class="contents"&GT;&LT;/section&GT;
+              &LT;!-- //contents : data view  --&GT;
+            &LT;/main&GT;
+            &LT;!-- //container --&GT;
+        </code>
+      </pre>
+    </div>
+
+    <div class="code-test">
+      <h5>language-css</h5>
+      <pre class="line-numbers">
+        <code class="language-css">
+          /* Code blocks */
+          pre[class*="language-"] {
+            padding: 1em;
+            margin: .5em 0;
+            overflow: auto;
+            border-radius: 0.3em;
+          }
+          :not(pre) > code[class*="language-"],
+          pre[class*="language-"] {
+            background: #272822;
+          }
+        </code>
+      </pre>
+    </div>
+
+    <div class="code-test">
+      <h5>language-javascript</h5>
+      <pre class="line-numbers">
+        <code class="language-javascript">
+          // calculateDateDifference
+          const calculateDateDifference = (inputDate) => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); 
+            const input = new Date(inputDate);
+            const timeDifference = input.getTime() - today.getTime();
+            const dayDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            return dayDifference;
+          }
+        </code>
+      </pre>
+    </div>
+
+  </body>
+</html>
