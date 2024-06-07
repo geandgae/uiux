@@ -105,7 +105,12 @@ const core = (() => {
           <td class="depth4"><p>${item.depth4}</p></td>
           <td class="id"><p>${item.view_id}</p></td>
           <td class="name"><p>${item.view_name}</p></td>
-          <td class="url"><p><a href="${item.view_url}" target="blank">${item.view_url}</a></p></td>
+          <td class="url">
+            <p>
+              <a href="${item.view_url}" target="target">${item.view_url}</a> 
+              <a href="${item.view_url}" target="blank" class="icon-link">!!fv!!</a>
+            </p>
+          </td>
           <td class="date"><p>${item.date}</p></td>
           <td class="state"><p>${item.state.trim() === "" ? "대기" : item.state}</p></td>
           <td class="author"><p>${item.author}</p></td>
