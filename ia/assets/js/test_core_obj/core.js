@@ -196,6 +196,16 @@ const core = (() => {
         }
       });
       hideLoading();
+
+      // 검색초기화
+      const selects = document.querySelectorAll(".filter select");
+      const input = document.querySelector(".filter input[type=text]");
+      input.value = "";
+      selects.forEach((item) => {
+        item.selectedIndex = 0;
+      });
+      dataClone = filterData(dataOrign, "");
+      renderTable(dataClone);
     };
 
     categoryButtons.forEach((item) => {
@@ -205,30 +215,21 @@ const core = (() => {
 
   // initSelectFilter : 선택필터 초기화
   const initSelectFilter = () => {
-    const selects = document.querySelectorAll(".filter select");
+    const selectAuthor = document.querySelector(".filter select[name=author]");
+    const selectState = document.querySelector(".filter select[name=state]");
     const input = document.querySelector(".filter input[type=text]");
 
-    const filterBySelect = () => {
+    const updateFilteredData = () => {
+      const selectedAuthor = selectAuthor.value;
+      const selectedState = selectState.value;
       const keyword = input.value;
-      dataClone = filterData(dataOrign, keyword);
-      // renderTable : 테이블을 dataClone으로 다시 그림
+      dataClone = filterData(dataOrign, selectedAuthor, selectedState, keyword);
       renderTable(dataClone);
-      // dataClone 테이블을 렌더링한 후 이벤트 리스너 다시 설정
     };
 
-    // 선택 옵션 실행
-    selects.forEach((item) => {
-      item.addEventListener("change", () => {
-        const option = item.options[item.selectedIndex].value;
-        input.value = option;
-        filterBySelect();
-      });
-    });
-
-    // 검색 입력값 실행
-    input.addEventListener("keyup", () => {
-      filterBySelect();
-    });
+    selectAuthor.addEventListener("change", updateFilteredData);
+    selectState.addEventListener("change", updateFilteredData);
+    input.addEventListener("keyup", updateFilteredData);
   };
 
   // updateTableIndex : 전체개수
@@ -509,8 +510,15 @@ const core = (() => {
   const waitTime = (timeToDelay) => new Promise((resolve) => setTimeout(resolve, timeToDelay));
 
   // filterData : renderTable, selectFilter 사용
-  const filterData = (data, query) => {
-    return data.filter((i) => i.toLowerCase().indexOf(query.toLowerCase()) > -1);
+  const filterData = (data, query1, query2 = "", query3 = "") => {
+    return data.filter((i) => {
+      const lowerCaseItem = i.toLowerCase();
+      return (
+        lowerCaseItem.indexOf(query1.toLowerCase()) > -1 &&
+        lowerCaseItem.indexOf(query2.toLowerCase()) > -1 &&
+        lowerCaseItem.indexOf(query3.toLowerCase()) > -1
+      );
+    });
   };
 
   // setToast : 토스트 메시지를 표시하는 함수
