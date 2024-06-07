@@ -35,6 +35,26 @@
   --color_bg01: #5a5a5a;
 }
 
+/* ex */
+.two {
+  color: var(--my-var, red); /* --my-var가 정의되지 않았을 경우 red로 표시됨 */
+}
+
+.three {
+  background-color: var(
+    --my-var,
+    var(--my-background, pink)
+  ); /* my-var와 --my-background가 정의되지 않았을 경우 pink로 표시됨 */
+}
+
+.three {
+  background-color: var(
+    --my-var,
+    --my-background,
+    pink
+  ); /* 유효하지 않음: "--my-background, pink" */
+}
+
 /* commons */
 * {
   font-family: 'NotoSansKR', sans-serif;

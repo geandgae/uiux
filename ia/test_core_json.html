@@ -87,6 +87,61 @@
       .recent {
         color: #999;
       }
+      :root {
+        --color-prm : #3281ff;
+        --color-2nd : #09532a;
+        --color-3rd : #ff6c27;
+        --color-4th : #fffc4d;
+        --color-5th : #22031d;
+
+        --color-black : #000;
+        --color-white : #fff;
+
+        --color-dark : #929292;
+        --color-dkgray : #414141;
+        --color-gray : #929292;
+        --color-ltgray : #ddd;
+        --color-light : #f9f9f9;
+
+        --font: Dotum;
+        --fonts: sans-serif;
+
+        --font12: 12rem var(--font);
+        --font13: 13rem var(--font);
+
+        --font14: 14rem var(--font);
+        --font15: 15rem var(--font);
+        --font16: 16rem var(--fonts);
+        --font18: 18rem var(--fonts);
+
+        --color_font00: #fff;
+        --color_font01: #1a1a1a;
+        --color_font02: #5a5a5a;
+        --color_line01: #1a1a1a;
+        --color_bg01: #5a5a5a;
+
+        --mg_sm: 1px;
+        --mg_md: 2px;
+      }
+      .test {
+        color: #fff;
+        background-color: var(--color-prm);
+      }
+      .test2 {
+        color: #fff;
+        background-color: var(--color-prm);
+      }
+      .size-sm {
+        margin: var(--mg_sm);
+      }
+      .size-md {
+        margin: var(--mg_md);
+      }
+      .direction-up {
+        margin-bottom: 0;
+        margin-left: 0;
+        margin-right: 0;
+      }
     </style>
 
     <!-- loading -->
@@ -95,6 +150,8 @@
 
     <!-- wrap -->
     <div id="wrap">
+      <p class="test direction-up size-sm" style="--color-prm:#09532a">test</p>
+      <p class="test2 direction-up size-md">test</p>
       <!-- header -->
       <header class="header">
         <!-- hta -->
