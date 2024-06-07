@@ -46,10 +46,8 @@ const core = (() => {
 
   // 불러올 JSON 파일 경로 배열
   const jsonFilePaths = [
-    // "./assets/js/test_core_json/data_00.json",
-    // "./assets/js/test_core_json/data_01.json",
-    "./assets/js/test_core_json/data_02.json",
-    "./assets/js/test_core_json/data_03.json",
+    "./assets/js/test_core_json_class/data_00.json",
+    "./assets/js/test_core_json_class/data_01.json",
   ];
 
   // 여러 개의 데이터를 비동기적으로 불러오고 로딩 화면을 표시하는 함수
@@ -57,11 +55,6 @@ const core = (() => {
     try {
       // 데이터를 불러오는 중임을 사용자에게 알리기 위해 로딩 화면을 표시합니다.
       displayLoading();
-
-      // json 파일 한개
-      // 실제로 데이터를 비동기적으로 불러오는 로직을 작성합니다.
-      // const response = await fetch("./assets/js/test_core_json/data_00.json");
-      // const data = await response.json();
 
       // json 파일 n개
       // 각 파일 경로에 대해 fetch 요청을 생성합니다.

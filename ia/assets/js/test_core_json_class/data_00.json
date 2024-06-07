@@ -1,0 +1,78 @@
+[
+  { 
+    "id": "table_00",
+    "depth1": "ct01_title",
+    "depth2": "d99",
+    "depth3": "d3",
+    "depth4": "d4",
+    "view_id": "view_id",
+    "view_name": "view_name",
+    "view_url": "aaa/aaa.url",
+    "date": "2024-04-21",
+    "state": "fin",
+    "author": "ct00_author",
+    "note": [
+      "2024-05-23 mod"
+    ]
+  },
+  { 
+    "id": "table_00",
+    "depth1": "ct01_title",
+    "depth2": "d99",
+    "depth3": "d3",
+    "depth4": "d4",
+    "view_id": "view_id",
+    "view_name": "view_name",
+    "view_url": "aaa/aaa.url",
+    "date": "2024-05-22",
+    "state": "fin",
+    "author": "ct00_author",
+    "note": [
+      "array1",
+      "array2",
+      "array3"
+    ]
+  },
+  { 
+    "id": "table_00",
+    "depth1": "ct01_title",
+    "depth2": "d99",
+    "depth3": "d3",
+    "depth4": "d4",
+    "view_id": "view_id",
+    "view_name": "view_name",
+    "view_url": "aaa/aaa.url",
+    "date": "2024-05-23",
+    "state": "fin",
+    "author": "ct00_author",
+    "note": []
+  },
+  { 
+    "id": "table_00",
+    "depth1": "ct01_title",
+    "depth2": "d99",
+    "depth3": "d3",
+    "depth4": "d4",
+    "view_id": "view_id",
+    "view_name": "view_name",
+    "view_url": "aaa/aaa.url",
+    "date": "2024-06-24",
+    "state": "fin",
+    "author": "ct00_author",
+    "note": []
+  },
+  { 
+    "id": "table_00",
+    "depth1": "ct01_title",
+    "depth2": "d99",
+    "depth3": "d3",
+    "depth4": "d4",
+    "view_id": "view_id",
+    "view_name": "view_name",
+    "view_url": "aaa/aaa.url",
+    "date": "2024-03-25",
+    "state": "fin",
+    "author": "ct00_author",
+    "note": []
+  }
+]
