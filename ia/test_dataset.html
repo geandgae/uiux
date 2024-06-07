@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dataset</title>
+    <link href="./assets/css/reset.css" type="text/css" media="all" rel="stylesheet" />
+  </head>
+  <style>
+    * {
+      font-size: 10px;
+    }
+    .item1 {
+      font-size: 11px;
+    }
+    .item2 {
+      background-color: lightgreen;
+    }
+    .item3 {
+      color: lightcoral;
+    }
+  </style>
+  <body>
+    <!-- 공백으로 구분된 클래스명 저장 -->
+    <div class="test-box" data-css="item1, item2, item3">This div will be styled based on data-items array.</div>
+
+    <script>
+      // JavaScript에서 data 속성을 읽고 CSS 클래스 적용
+      document.addEventListener("DOMContentLoaded", function () {
+        const element = document.querySelector(".test-box");
+        const data = element.getAttribute("data-css");
+        // 공백으로 구분된 문자열을 배열로 변환
+        const itemsArray = data.split(", ");
+        console.log(itemsArray)
+
+        // 배열 데이터를 기반으로 CSS 클래스를 동적으로 적용
+        itemsArray.forEach((item) => {
+          element.classList.add(item);
+        });
+      });
+    </script>
+
+
+    <!-- ver2 배열 -->
+    <!-- <div id="myElement" data-items='["item1", "item2", "item3"]'>This div will be styled based on data-items array.</div>
+
+    <script>
+      // JavaScript에서 data 속성을 읽고 CSS 클래스 적용
+      document.addEventListener("DOMContentLoaded", function () {
+        const element = document.getElementById("myElement");
+        const data = element.getAttribute("data-items");
+        const itemsArray = JSON.parse(data);
+        console.log(itemsArray);
+
+        // 배열 데이터를 기반으로 CSS 클래스를 동적으로 적용
+        itemsArray.forEach((item) => {
+          element.classList.add(item);
+        });
+      });
+    </script> -->
+  </body>
+</html>
