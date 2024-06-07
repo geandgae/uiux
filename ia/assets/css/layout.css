@@ -186,6 +186,139 @@ inline-flex */
   display: none !important;
 }
 
+mt-0 {
+  margin-top: 0 !important; 
+}
+mt-1 {
+  margin-top: 4px !important;
+}
+mt-2 {
+  margin-top: 8px !important;
+}
+mt-n2 {
+  margin-top: -8px !important;
+}
+
+/* scss
+// 변수 선언
+$spacing-unit: 4px; // 기본 간격 단위
+
+// 루프를 사용하여 클래스 생성
+@for $i from 0 through 10 {
+  .mt-#{$i} {
+    margin-top: $i * $spacing-unit !important;
+  }
+  .mt-#{$i} {
+    margin-top: $i * $spacing-unit !important;
+  }
+  .ml-#{$i} {
+    margin-left: $i * $spacing-unit !important;
+  }
+  .mb-#{$i} {
+    margin-bottom: $i * $spacing-unit !important;
+  }
+  .mr-#{$i} {
+    margin-right: $i * $spacing-unit !important;
+  }
+  .mx-#{$i} {
+    margin-left: $i * $spacing-unit !important;
+    margin-right: $i * $spacing-unit !important;
+  }
+  .my-#{$i} {
+    margin-top: $i * $spacing-unit !important;
+    margin-bottom: $i * $spacing-unit !important;
+  }
+  .ma-#{$i} {
+    margin: $i * $spacing-unit !important;
+  }
+  // auto를 위한 클래스
+  .ma-auto {
+    margin: auto !important;
+  }
+  .mx-auto {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .my-auto {
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+  }
+}
+*/
+
+// 변수 선언
+$spacing-unit: 4px; // 기본 간격 단위
+
+/* // 반복문을 사용하여 margin 클래스 생성
+@for $i from -10 through 10 {
+  // 양수 마진
+  @if $i >= 0 {
+    .mt-#{$i} {
+      margin-top: $i * $spacing-unit !important;
+    }
+    .ml-#{$i} {
+      margin-left: $i * $spacing-unit !important;
+    }
+    .mb-#{$i} {
+      margin-bottom: $i * $spacing-unit !important;
+    }
+    .mr-#{$i} {
+      margin-right: $i * $spacing-unit !important;
+    }
+    .mx-#{$i} {
+      margin-left: $i * $spacing-unit !important;
+      margin-right: $i * $spacing-unit !important;
+    }
+    .my-#{$i} {
+      margin-top: $i * $spacing-unit !important;
+      margin-bottom: $i * $spacing-unit !important;
+    }
+    .ma-#{$i} {
+      margin: $i * $spacing-unit !important;
+    }
+  }
+  // 음수 마진
+  @else {
+    .mt-n#{$i * -1} {
+      margin-top: $i * $spacing-unit !important;
+    }
+    .ml-n#{$i * -1} {
+      margin-left: $i * $spacing-unit !important;
+    }
+    .mb-n#{$i * -1} {
+      margin-bottom: $i * $spacing-unit !important;
+    }
+    .mr-n#{$i * -1} {
+      margin-right: $i * $spacing-unit !important;
+    }
+    .mx-n#{$i * -1} {
+      margin-left: $i * $spacing-unit !important;
+      margin-right: $i * $spacing-unit !important;
+    }
+    .my-n#{$i * -1} {
+      margin-top: $i * $spacing-unit !important;
+      margin-bottom: $i * $spacing-unit !important;
+    }
+    .ma-n#{$i * -1} {
+      margin: $i * $spacing-unit !important;
+    }
+  }
+}
+
+// auto를 위한 클래스
+.ma-auto {
+  margin: auto !important;
+}
+.mx-auto {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.my-auto {
+  margin-top: auto !important;
+  margin-bottom: auto !important;
+} */
+
+
 /* loading */
 .loading {
   display: none;
