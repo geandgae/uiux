@@ -276,6 +276,30 @@ $spacing-unit: 4px; // 기본 간격 단위
     .ma-#{$i} {
       margin: $i * $spacing-unit !important;
     }
+    // 패딩 클래스 추가
+    .pt-#{$i} {
+      padding-top: $i * $spacing-unit !important;
+    }
+    .pl-#{$i} {
+      padding-left: $i * $spacing-unit !important;
+    }
+    .pb-#{$i} {
+      padding-bottom: $i * $spacing-unit !important;
+    }
+    .pr-#{$i} {
+      padding-right: $i * $spacing-unit !important;
+    }
+    .px-#{$i} {
+      padding-left: $i * $spacing-unit !important;
+      padding-right: $i * $spacing-unit !important;
+    }
+    .py-#{$i} {
+      padding-top: $i * $spacing-unit !important;
+      padding-bottom: $i * $spacing-unit !important;
+    }
+    .pa-#{$i} {
+      padding: $i * $spacing-unit !important;
+    }
   }
   // 음수 마진
   @else {
@@ -301,6 +325,30 @@ $spacing-unit: 4px; // 기본 간격 단위
     }
     .ma-n#{$i * -1} {
       margin: $i * $spacing-unit !important;
+    }
+    // 패딩 클래스 추가
+    .pt-n#{$i * -1} {
+      padding-top: $i * $spacing-unit !important;
+    }
+    .pl-n#{$i * -1} {
+      padding-left: $i * $spacing-unit !important;
+    }
+    .pb-n#{$i * -1} {
+      padding-bottom: $i * $spacing-unit !important;
+    }
+    .pr-n#{$i * -1} {
+      padding-right: $i * $spacing-unit !important;
+    }
+    .px-n#{$i * -1} {
+      padding-left: $i * $spacing-unit !important;
+      padding-right: $i * $spacing-unit !important;
+    }
+    .py-n#{$i * -1} {
+      padding-top: $i * $spacing-unit !important;
+      padding-bottom: $i * $spacing-unit !important;
+    }
+    .pa-n#{$i * -1} {
+      padding: $i * $spacing-unit !important;
     }
   }
 }
