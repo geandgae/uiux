@@ -2,9 +2,9 @@
   "name": "webpack-template-basic",
   "version": "1.0.0",
   "description": "",
-  "main": "index.html",
+  "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --env mode=development",
+    "dev": "webpack-dev-server --open --env mode=development",
     "build": "webpack --env mode=production"
   },
   "keywords": [],
