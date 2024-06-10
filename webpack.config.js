@@ -8,9 +8,22 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // export
 // node js 환경에서는 module.export = {}로 내보네야함
 module.exports = {
+  //// 임시테스트
+  mode: 'development', // 개발 모드로 설정하여 압축을 방지
+  
   // parcel index.html
   // 파일을 읽어들이기 시작하는 진입점 설정
   entry : './ia/assets/js/static/core.js',
+  
+  output: {
+    filename: 'nomin.js', // 압축되지 않은 파일 이름
+    path: path.resolve(__dirname, 'dist'),
+  },
+  optimization: {
+    minimize: false, // 압축 비활성화
+  },
+  //// 임시테스트
+
 
   resolve: {
     // 절대 경로로 사용할 별칭을 지정합니다.
@@ -22,12 +35,14 @@ module.exports = {
   
   
   // 결과물(번들)을 반환하는 설정
+  /*
   output : {
     // 절대경로를 명시해주어야 함!
     path : path.resolve(__dirname, 'dist'),
     filename: 'core.js',
     clean : true
   },
+  */
 
   module: {
     rules: [
