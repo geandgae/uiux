@@ -1,94 +1,24 @@
+import css from '@scss/test.scss'
+
 "use strict";
 
+// Import
+import { at, st, ctg } from "./data_options.js";
+import { dataArray } from "./data_set.js";
+
+// Core module
 const core = (() => {
-  // init
+  // Global variables
   const loadDiv = document.querySelector(".loading");
-  let dataJson = [];
-  const dataOrign = [];
+  const dataOrign = []; // dataArray 저장
   let dataClone = []; // dataOrign 필터 상태에 따라 저장
-  const at = {
-    u_00 : "사용자00", 
-    u_01 : "사용자01",
-    u_02 : "사용자02",
-  }
-  const st = {
-    fin : "완료",
-    mod : "수정",
-    del : "삭제",
-    wtn : "대기",
-    ing : "진행",
-  }
-  const ctg = {
-    ct00: {
-      id: "table_00",
-      title: "table_00",
-    },
-    ct01: {
-      id: "table_01",
-      title: "table_01",
-    },
-    ct02: {
-      id: "table_02",
-      title: "table_02",
-    },
-  };
 
-  // 불러올 JSON 파일 경로 배열
-  const jsonFilePaths = [
-    // "./assets/js/test_core_json/data_00.json",
-    // "./assets/js/test_core_json/data_01.json",
-    "./assets/js/test_core_json/data_02.json",
-    "./assets/js/test_core_json/data_03.json",
-  ];
-
-  // 여러 개의 데이터를 비동기적으로 불러오고 로딩 화면을 표시하는 함수
-  const fetchData = async (filePaths) => {
-    try {
-      // 데이터를 불러오는 중임을 사용자에게 알리기 위해 로딩 화면을 표시합니다.
-      displayLoading();
-
-      // json 파일 한개
-      // 실제로 데이터를 비동기적으로 불러오는 로직을 작성합니다.
-      // const response = await fetch("./assets/js/test_core_json/data_00.json");
-      // const data = await response.json();
-
-      // json 파일 n개
-      // 각 파일 경로에 대해 fetch 요청을 생성합니다.
-      const fetchPromises = filePaths.map((filePath) => fetch(filePath).then((response) => response.json()));
-      // 모든 fetch 요청이 완료될 때까지 기다립니다.
-      const data = await Promise.all(fetchPromises);
-
-      // 데이터를 성공적으로 불러온 후 로딩 화면을 숨깁니다.
-      hideLoading();
-
-      // 불러온 데이터를 하나의 배열로 합칩니다.
-      const combinedData = data.flat();
-
-      // 합쳐진 데이터를 반환합니다.
-      return combinedData;
-      // 불러온 데이터를 반환합니다.
-    } catch (error) {
-      // 데이터 불러오기 중 오류가 발생한 경우 오류를 콘솔에 기록합니다.
-      console.error("데이터를 불러오는 중 오류가 발생했습니다:", error);
-
-      // 로딩 화면을 숨깁니다.
-      hideLoading();
-
-      // 오류 발생 시에는 null을 반환합니다.
-      return null;
-    }
-  };
-
-  // initData
-  const initData = async (data, out) => {
-    displayLoading();
-    await waitTime(0); // 비동기 처리를 위해 setTimeout 사용
-    const btnMore = `<button type="button" class="btn" title="더보기"><i></i></button>`
+  // initData : dataArray의 데이터를 테이블 형식으로 변환해서 dataOrign 배열에 저장
+  const initData = (data, out) => {
+    const btnMore = `<button type="button" class="btn" title="더보기"><i></i></button>`;
     data.forEach((item) => {
       // date
       const recentDate = calculateDateDifference(item.date);
-      // console.log(recentDate);
-      // note
       const numNote = item.note.length;
       const hasMultipleNotes = numNote > 1;
       const multiClass = hasMultipleNotes ? "multi" : "";
@@ -115,19 +45,19 @@ const core = (() => {
           <td class="state"><p>${item.state.trim() === "" ? "대기" : item.state}</p></td>
           <td class="author"><p>${item.author}</p></td>
           <td class="note ${multiClass}">
-            ${multiClass.trim()  === "" ? "" : btnMore}
+            ${multiClass.trim() === "" ? "" : btnMore}
             <div class="note-memo target">${noteRow.join("")}</div>
           </td>
         </tr>
       `;
       out.push(tableRow);
     });
-    hideLoading();
   };
 
   // initTable : data_options ctg(category)의 개수만큼 article을 생성(빈 테이블 생성)
   const initTable = () => {
     const container = document.querySelector(".contents");
+    // const articles = ctg.map(category => {}) 배열형태
     // 객체를 배열로 전환
     const articles = Object.values(ctg).map((category) => {
       const { id, title } = category;
@@ -148,7 +78,11 @@ const core = (() => {
                 <th class="id">id</th>
                 <th class="name">name</th>
                 <th class="url">url</th>
-                <th class="date">date</th>
+                <th class="date">
+                  date
+                  <button class="sortasc">▲</button>
+                  <button class="sortdesc">▼</button>
+                </th>
                 <th class="state">state</th>
                 <th class="author">author</th>
                 <th class="note">note</th>
@@ -168,14 +102,12 @@ const core = (() => {
   const renderTable = async (data) => {
     displayLoading();
     const article = document.querySelectorAll(".article");
-    await waitTime(0); // 비동기 처리를 위해 setTimeout 사용
+    await waitTime(500); // 비동기 처리를 위해 setTimeout 사용
     article.forEach((item) => {
       const id = item.getAttribute("id");
       const tableBody = item.querySelector("tbody");
       const filteredData = filterData(data, id);
       tableBody.innerHTML = filteredData.join("");
-      // tableBody.innerHTML = data.join("");
-      // console.log(filteredData);
     });
     hideLoading();
     attachEventListeners();
@@ -253,7 +185,6 @@ const core = (() => {
       });
       dataClone = filterData(dataOrign, "");
       renderTable(dataClone);
-
     };
 
     categoryButtons.forEach((item) => {
@@ -275,9 +206,6 @@ const core = (() => {
       renderTable(dataClone);
     };
 
-    // selectAuthor.addEventListener("change", updateFilteredData);
-    // selectState.addEventListener("change", updateFilteredData);
-    // input.addEventListener("keyup", updateFilteredData);
     if (selectAuthor && selectState && input) {
       // 요소가 존재할 때만 이벤트 리스너를 등록합니다.
       selectAuthor.addEventListener("change", updateFilteredData);
@@ -286,19 +214,6 @@ const core = (() => {
     } else {
       console.error("One or more elements not found.");
     }
-
-    // const filterBySelect = () => {
-    //   const keyword = input.value;
-    //   dataClone = filterData(dataOrign, keyword);
-    //   // renderTable : 테이블을 dataClone으로 다시 그림
-    //   renderTable(dataClone);
-    //   // dataClone 테이블을 렌더링한 후 이벤트 리스너 다시 설정
-    // };
-
-    // 검색 입력값 실행
-    // input.addEventListener("keyup", () => {
-    //   filterBySelect();
-    // });
   };
 
   // updateTableIndex : 전체개수
@@ -355,6 +270,9 @@ const core = (() => {
       } else if (stateText === states.wtn || stateText.trim() === "") {
         item.classList.add("wtn");
         stateCounts.wtn++;
+      } else if (stateText === states.chk) {
+        item.classList.add("chk");
+        stateCounts.chk++;
       } else if (stateText === states.ing) {
         item.classList.add("ing");
         stateCounts.ing++;
@@ -455,26 +373,6 @@ const core = (() => {
   const waitTime = (timeToDelay) => new Promise((resolve) => setTimeout(resolve, timeToDelay));
 
   // filterData : renderTable, selectFilter 사용
-  // const filterData = (data, query) => {
-  //   return data.filter((i) => i.toLowerCase().indexOf(query.toLowerCase()) > -1);
-  // };
-  // const filterData = (data, query1, query2 = null) => {
-  //   // 두 번째 쿼리가 제공되지 않은 경우 첫 번째 쿼리만 사용
-  //   if (query2 === null) {
-  //     return data.filter((i) => i.toLowerCase().indexOf(query1.toLowerCase()) > -1);
-  //   } else {
-  //     return data.filter((i) => {
-  //       const lowerCaseItem = i.toLowerCase();
-  //       // const matchesAuthor = authorQuery === '' || item.author.toLowerCase().includes(authorQuery.toLowerCase());
-  //       // const matchesState = stateQuery === '' || item.state.toLowerCase().includes(stateQuery.toLowerCase());
-  //       // return matchesAuthor && matchesState;
-  //       return (
-  //         lowerCaseItem.indexOf(query1.toLowerCase()) > -1 &&
-  //         lowerCaseItem.indexOf(query2.toLowerCase()) > -1 
-  //       );
-  //     });
-  //   }
-  // };
   const filterData = (data, query1, query2 = "", query3 = "") => {
     return data.filter((i) => {
       const lowerCaseItem = i.toLowerCase();
@@ -485,20 +383,6 @@ const core = (() => {
       );
     });
   };
-
-  // calculateDateDifference
-  const calculateDateDifference = (inputDate) => {
-    // 현재 날짜를 얻습니다.
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); 
-    // 입력한 날짜를 파싱합니다.
-    const input = new Date(inputDate);
-    // 날짜 차이를 계산합니다.
-    const timeDifference = input.getTime() - today.getTime();
-    // 차이를 일 단위로 변환합니다.
-    const dayDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    return dayDifference;
-  }
 
   // setToast : 토스트 메시지를 표시하는 함수
   const setToast = (target) => {
@@ -519,32 +403,14 @@ const core = (() => {
     }, 1000);
   };
 
-
-  // 로딩 화면 표시 상태 변수
-  let isLoading = false;
-
-  // 로딩 화면을 표시하는 함수
+  // displayLoading : 로딩 표시
   const displayLoading = () => {
-    // 이미 로딩 중인 경우 중복으로 로딩 화면을 표시하지 않도록 합니다.
-    if (isLoading) {
-      return;
-    }
-    isLoading = true;
-    console.log("isLoading = true; / 로딩중");
     loadDiv.classList.add("active");
-    // const loadingSpinner = document.createElement("div");
-    // loadingSpinner.classList.add("loading-spinner");
   };
 
-  // 로딩 화면을 숨기는 함수
+  // hideLoading : 로딩 숨김
   const hideLoading = () => {
-    isLoading = false;
-    console.log("isLoading = false; / 로딩완료");
     loadDiv.classList.remove("active");
-    // const loadingSpinner = document.querySelector(".loading-spinner");
-    // if (loadingSpinner) {
-    //   loadingSpinner.remove();
-    // }
   };
 
   // attachEventListeners : 이벤트 리스너를 필터된 테이블(dataClone)에 다시 바인딩
@@ -556,29 +422,32 @@ const core = (() => {
     toggleRowSelection();
   };
 
-
-  // publicFunction
-  const publicFunction = async () => {
-    console.log("Public function called");
-    // fetchData 함수를 호출하여 데이터를 비동기적으로 불러오고 로딩 화면을 표시합니다.
-    await fetchData(jsonFilePaths)
-      .then((data) => {
-        // 데이터가 성공적으로 불러와졌을 때 수행할 작업을 여기에 작성합니다.
-        console.log("데이터를 성공적으로 불러왔습니다:");
-        dataJson = data;
-      })
-      .catch((error) => {
-        // 데이터 불러오기 중 오류가 발생했을 때 수행할 작업을 여기에 작성합니다.
-        console.error("데이터 불러오기 중 오류가 발생했습니다:", error);
-      });
-    await initData(dataJson, dataOrign);
-    initTable();
-    await renderTable(dataOrign);
-    // utils
-    initFilter();
+  // calculateDateDifference
+  const calculateDateDifference = (inputDate) => {
+    // 현재 날짜를 얻습니다.
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // 입력한 날짜를 파싱합니다.
+    const input = new Date(inputDate);
+    // 날짜 차이를 계산합니다.
+    const timeDifference = input.getTime() - today.getTime();
+    // 차이를 일 단위로 변환합니다.
+    const dayDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    return dayDifference;
   };
 
-  // 외부로 함수 return
+  // publicFunction : 외부로 return
+  const publicFunction = async () => {
+    console.log("Public function called");
+    initData(dataArray, dataOrign);
+    initTable();
+    await renderTable(dataOrign);
+
+    // utils
+    initFilter();
+    // hideLoading();
+  };
+
   return {
     publicFunction: publicFunction,
   };

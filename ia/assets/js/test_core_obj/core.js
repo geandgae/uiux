@@ -222,7 +222,7 @@ const core = (() => {
   const initSelectFilter = () => {
     const selectAuthor = document.querySelector(".filter select[name=author]");
     const selectState = document.querySelector(".filter select[name=state]");
-    const input = document.querySelector(".filter input[type=text]");
+    const input = document.querySelector(".filter input#keyword");
 
     const updateFilteredData = () => {
       const selectedAuthor = selectAuthor.value;
@@ -232,9 +232,19 @@ const core = (() => {
       renderTable(dataClone);
     };
 
-    selectAuthor.addEventListener("change", updateFilteredData);
-    selectState.addEventListener("change", updateFilteredData);
-    input.addEventListener("keyup", updateFilteredData);
+    // selectAuthor.addEventListener("change", updateFilteredData);
+    // selectState.addEventListener("change", updateFilteredData);
+    // input.addEventListener("keyup", updateFilteredData);
+    if (selectAuthor && selectState && input) {
+      // 요소가 존재할 때만 이벤트 리스너를 등록합니다.
+      selectAuthor.addEventListener("change", updateFilteredData);
+      selectState.addEventListener("change", updateFilteredData);
+      input.addEventListener("keyup", updateFilteredData);
+    } else {
+      console.error("One or more elements not found.");
+    }
+
+    
   };
 
   // updateTableIndex : 전체개수

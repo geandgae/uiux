@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>static</title>
+  </head>
+  <body>
+    <!-- loading -->
+    <div class="loading active"></div>
+    <!-- //loading -->
+
+    <!-- wrap -->
+    <div id="wrap">
+      <!-- header -->
+      <header class="header">
+        <!-- hta -->
+        <div class="hta">
+          <!-- filter -->
+          <div class="filter">
+            <!-- type_author -->
+            <select name="author"></select>
+            <!-- //type_author -->
+            <!-- type_state -->
+            <select name="state"></select>
+            <!-- //type_state -->
+            <!-- search -->
+            <fieldset class="search">
+              <legend>search fieldset</legend>
+              <label for="table_search">검색</label>
+              <input type="text" id="keyword" />
+              <button type="button" class="btn">버튼</button>
+            </fieldset>
+            <!-- //search -->
+          </div>
+          <!-- //filter -->
+          <!-- counter -->
+          <div class="counter">counter</div>
+          <!-- //counter -->
+          <!-- progress -->
+          <div class="progress">progress</div>
+          <!-- //progress -->
+        </div>
+        <!-- //hta -->
+      </header>
+      <!-- header -->
+      
+      <!-- container -->
+      <main class="container">
+        <!-- gnb -->
+        <section class="gnb">
+          <!-- category -->
+          <ul class="category"></ul>
+          <!-- //category -->
+        </section>
+        <!-- //gnb -->
+        <!-- preview -->
+        <section class="preview">
+          <iframe name="target" src="./login.html" width="100%" height="100%"></iframe>
+        </section>
+        <!-- //preview -->
+        <!-- contents : data view -->
+        <section class="contents"></section>
+        <!-- //contents : data view  -->
+      </main>
+      <!-- //container -->
+    </div>
+    <!-- //wrap -->
+
+    <!-- outland : toast -->
+    <div id="outland"></div>
+    <!-- //outland : toast -->
+  </body>
+</html>
