@@ -1,10 +1,15 @@
 // import
 const path = require('path');
 const HtmlPlugin = require('html-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+module.exports = (env) => {
+  const isDevelopment = env.mode === 'development';
+  
+  return {
+    mode: isDevelopment ? 'development' : 'production',
 
+<<<<<<< HEAD
 // export
 // node js 환경에서는 module.export = {}로 내보네야함
 module.exports = {
@@ -24,13 +29,81 @@ module.exports = {
   },
   //// 임시테스트
 
+=======
+    entry: './ia/assets/js/static/core.js',
+>>>>>>> 1129ae554f3effe98f5fc9c2561e73017b6eba5c
 
-  resolve: {
-    // 절대 경로로 사용할 별칭을 지정합니다.
-    alias: {
-      // 아래 경로는 실제 프로젝트 구조에 맞게 수정하세요.
-      '@scss': path.resolve(__dirname, 'ia/assets/scss')
+    output: {
+      filename: isDevelopment ? './assets/js/core.js' : './assets/js/core.min.js',
+      path: path.resolve(__dirname, 'dist'),
+      clean: true
+    },
+
+    resolve: {
+      alias: {
+        '@scss': path.resolve(__dirname, 'ia/assets/scss'),
+        '@css': path.resolve(__dirname, 'ia/assets/css')
+      }
+    },
+
+    module: {
+      rules: [
+        {
+          test: /\.scss$/,
+          exclude: /node_modules/,
+          use: [
+            isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+            'css-loader',
+            'postcss-loader',
+            'sass-loader',
+          ],
+          include: path.resolve(__dirname, 'ia/assets/scss')
+        },
+        {
+          test: /\.css$/,
+          use: [
+            isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+            'css-loader',
+            'postcss-loader'
+          ],
+          include: path.resolve(__dirname, 'ia/assets/css')
+        },
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          include: path.resolve(__dirname, 'ia/assets')
+        },
+        {
+          test: /\.json$/,
+          loader: 'json-loader',
+          type: 'javascript/auto',
+          include: path.resolve(__dirname, 'ia/assets/js/test_core_json'),
+        },
+      ]
+    },
+
+    plugins: [
+      new HtmlPlugin({
+        template: './ia/test_static.html',
+        filename: isDevelopment ? './index.html' : './src/test_static.html',
+        minify: !isDevelopment,
+      }),
+      isDevelopment ? undefined : new MiniCssExtractPlugin({
+        filename: './assets/css/styles.css',
+      }),
+    ].filter(Boolean),
+
+    optimization: {
+      minimize: !isDevelopment,
+    },
+
+    devServer: {
+      host: 'localhost',
+      // static: {
+      //   directory: path.resolve(__dirname, './'),
+      // }
     }
+<<<<<<< HEAD
   },
   
   
@@ -103,3 +176,7 @@ module.exports = {
     host: 'localhost'
   }
 }
+=======
+  };
+};
+>>>>>>> 1129ae554f3effe98f5fc9c2561e73017b6eba5c
