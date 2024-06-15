@@ -1,0 +1,60 @@
+@charset "utf-8";
+
+body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 200px;
+  // background-color: aqua;
+  div {
+    width: 100%;
+    // background-color: $color-primary;
+    @include flex-center;
+  }
+  article {
+    a {
+      display: block;
+      font-size: 16px;
+      margin: 5px;
+    }
+  }
+}
+
+@include mq(mobile) {
+  div {
+    padding: 0;
+    &.btn {
+      width: 100%;
+    }
+    .btn {
+      width: 200%;
+      &:hover {
+        background-color: red;
+      }
+    }
+  }
+
+  .test {
+    & .btn {
+      background-color: red;
+    }
+    .btn:hover & {
+      background-color: aqua;
+    }
+    span & {
+      width: 100px;
+    }
+  }
+
+
+  .wrap{
+    .box{
+      .outer_wrapper &{
+        margin:0 auto; 
+        width:1024px;
+      }
+    }
+  }
+}
+
+

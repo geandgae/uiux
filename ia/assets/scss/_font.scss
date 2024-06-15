@@ -1,0 +1,15 @@
+// Font face mixin for better reusability
+@mixin font-face($family, $weight, $url) {
+    @font-face {
+      font-family: $family;
+      font-style: normal;
+      font-weight: $weight;
+      src: url($url) format('truetype');
+    }
+  }
+  
+  // Using the mixin to define font faces
+  @include font-face('NotoSansKR', 100, '../css/fonts/font_noto/NotoSansKR-Thin.ttf');
+  @include font-face('NotoSansKR', 400, '../css/fonts/font_noto/NotoSansKR-Medium.ttf');
+  @include font-face('NotoSansKR', 700, '../css/fonts/font_noto/NotoSansKR-ExtraBold.ttf');
+  

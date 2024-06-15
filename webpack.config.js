@@ -9,7 +9,7 @@ module.exports = (env) => {
   return {
     mode: isDevelopment ? 'development' : 'production',
 
-    entry: './ia/assets/js/static/core.js',
+    entry: './ia/assets/js/bong/core.js',
 
     output: {
       filename: isDevelopment ? './assets/js/core.js' : './assets/js/core.min.js',
@@ -62,8 +62,8 @@ module.exports = (env) => {
 
     plugins: [
       new HtmlPlugin({
-        template: './ia/test_static.html',
-        filename: isDevelopment ? './index.html' : './src/test_static.html',
+        template: './ia/bong.html',
+        // filename: isDevelopment ? './index.html' : './src/bong.html',
         minify: !isDevelopment,
       }),
       isDevelopment ? undefined : new MiniCssExtractPlugin({
@@ -77,6 +77,7 @@ module.exports = (env) => {
 
     devServer: {
       host: 'localhost',
+      hot: true,
       // static: {
       //   directory: path.resolve(__dirname, './'),
       // }
