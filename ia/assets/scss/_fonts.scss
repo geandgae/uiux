@@ -1,0 +1,21 @@
+// Font face mixin for better reusability
+@mixin font-face($family, $weight, $url) {
+    @font-face {
+      font-family: $family;
+      font-style: normal;
+      font-weight: $weight;
+      src: url($url) format('truetype');
+    }
+  }
+  
+  // Using the mixin to define font faces
+  @include font-face('Pretendard', 100, './fonts/Pretendard/Pretendard-Thin.woff');
+  @include font-face('Pretendard', 200, './fonts/Pretendard/Pretendard-ExtraLight.woff');
+  @include font-face('Pretendard', 300, './fonts/Pretendard/Pretendard-Light.woff');
+  @include font-face('Pretendard', 400, './fonts/Pretendard/Pretendard-Regular.woff');
+  @include font-face('Pretendard', 500, './fonts/Pretendard/Pretendard-Medium.woff');
+  @include font-face('Pretendard', 600, './fonts/Pretendard/Pretendard-SemiBold.woff');
+  @include font-face('Pretendard', 700, './fonts/Pretendard/Pretendard-Black.woff');
+  @include font-face('Pretendard', 800, './fonts/Pretendard/Pretendard-ExtraBold.woff');
+  @include font-face('Pretendard', 900, './fonts/Pretendard/Pretendard-Black.woff');
+  

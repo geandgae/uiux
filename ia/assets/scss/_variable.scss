@@ -3,4 +3,67 @@
 /* css 주석 노출 */
 // css 주석 비노출
 // 형태(btn) - 의미(cancel) - 순서(01) - 상태(on off active)
-$color-primary: #f1cc65;
+
+// color
+$color-primary: #4265ED;
+$color-primary-medium: #3554CC;
+$color-primary-dark: #1E2C65;
+$color-primary-light: #F6F9FC;
+$color-primary-semiLight: #8CADFF;
+$color-primary-semi: #E1EAFF;
+
+$color-secondary: #FF2266;
+$color-secondary-medium: #DA114F;
+$color-secondary-dark: #970935;
+$color-secondary-light: #FFF5F8;
+$color-secondary-semiLight: #FFB8CC;
+$color-secondary-semi: #ffd0dd;
+
+$color-gray-100: #F7F7F7;
+$color-gray-200: #EDEDED;
+$color-gray-300: #D9D9D9;
+$color-gray-400: #CCCCCC;
+$color-gray-500: #C0C0C0;
+$color-gray-600: #868686;
+$color-gray-700: #777777;
+$color-gray-800: #555555;
+$color-gray-900: #2A2A2A;
+
+$color-white: #fff;
+$color-black: #000;
+
+$color-success: #28A745;
+$color-success-dark: #117428;
+$color-success-light: #CFEBD6;
+
+$color-danger: #DC3545;
+$color-danger-dark: #AC1C2A;
+$color-danger-light: #FDDEE1;
+
+$color-warning: #FFC107;
+$color-warning-dark: #CE9B00;
+$color-warning-light: #FFEAAC;
+
+$color-info: #17A2B8;
+$color-info-dark: #127888;
+$color-info-light: #D5ECF0;
+
+// grid
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+// font
+$font-size: (
+  basic:16px,
+  l:20px,
+  xl:24px,
+  m: 14px,
+  s: 12px,
+  xs: 10px
+);

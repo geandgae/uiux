@@ -1,0 +1,112 @@
+@charset "utf-8";
+
+// ex
+// @mixin mixin-ex () {
+//   @content;
+// }
+// .ex{
+//   @include mixin-ex() {
+//     // @content; 속성 삽입
+//     background:#f0f0f0;
+//   };
+// }
+
+
+// mixin add-bong
+// ellipsis
+@mixin ellipsis($line: 1) {
+  @if ($line == 1) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: $line;
+  }
+}
+// size
+@mixin size($w, $h: $w) {
+  width: $w;
+  height: $h;
+}
+// flex-center
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+}
+//가로 가운데 정렬
+@mixin posX {
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin-left: 0 !important;
+}
+//세로 중앙 정렬
+@mixin posY {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin-top: 0 !important;
+}
+//가로 세로 가운데로
+@mixin posXY {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+}
+// vs-b
+@mixin vs-b {
+  display: block;
+  content: "";
+}
+// vs-ib
+@mixin vs-ib {
+  display: inline-block;
+  content: "";
+}
+// 스크롤바 삭제
+@mixin scroll-hide {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+// make-arrow
+@mixin make-arrow($w: 0.12rem, $pl: 0, $pt: $pl, $line: 1px, $color: #959595, $deg: -45) {
+  position: relative;
+  &::after {
+    position: absolute;
+    top: $pt;
+    left: $pl;
+    content: "";
+    @include size($w, $h: $w);
+    border-top: $line solid $color;
+    border-left: $line solid $color;
+    transform: rotate($deg + deg);
+  }
+}
+// make-x
+@mixin make-x($w: 0.26rem, $line: 1px, $color: #717171) {
+  position: relative;
+  @include size($w, $h: $w);
+  &::before,
+  &::after {
+    display: block;
+    content: "";
+    position: absolute;
+    left: $w / 2;
+    height: 100%;
+    width: $line;
+    background-color: $color;
+  }
+  &::before {
+    transform: rotate(45deg);
+  }
+  &::after {
+    transform: rotate(-45deg);
+  }
+}

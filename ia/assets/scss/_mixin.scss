@@ -626,3 +626,27 @@ $sizes: 0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95
   background-position: $btnPositionX $btnPositionY;
   background-repeat: no-repeat;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////// bong //////////
+// font-size
+@function get-font-size($size) {
+  @return map-get($font-size, $size);
+}
+
+@mixin font-size($size) {
+  font-size: get-font-size($size);
+}
