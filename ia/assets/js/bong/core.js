@@ -36,7 +36,7 @@ const core = (() => {
 
   // initData : dataArray의 데이터를 테이블 형식으로 변환해서 dataOrign 배열에 저장
   const initData = (data, out) => {
-    const btnMore = `<button type="button" class="btn" title="더보기"><i></i></button>`;
+    const btnMore = `<button type="button" class="btn" title="더보기"><i class="mat-icon-assignmentAdd"></i></button>`;
     data.forEach((item) => {
       // date
       const recentDate = calculateDateDifference(item.date);
@@ -65,8 +65,7 @@ const core = (() => {
           <td class="name"><p>${item.view_name}</p></td>
           <td class="url">
             <p>
-              <a href="${item.view_url}" target="target">${item.view_url}</a> 
-              <a href="${item.view_url}" target="blank" class="icon-link">!!fv!!</a>
+              <a href="${item.view_url}" target="target">${item.view_url}</a>
             </p>
           </td>
           <td class="date"><p>${item.date}</p></td>
@@ -77,10 +76,10 @@ const core = (() => {
             <div class="note-memo target">${noteRow.join("")}</div>
           </td>
         </tr>
-      `;
-      out.push(tableRow);
-    });
-  };
+        `;
+        out.push(tableRow);
+      });
+    };
 
   // initTable : data_options ctg(category)의 개수만큼 article을 생성(빈 테이블 생성)
   const initTable = () => {
@@ -315,15 +314,19 @@ const core = (() => {
     // 진행상태 퍼센트 계산
     const totalPercentage = totalRows > 0 ? Math.round((stateCounts.fin / totalRows) * 100) : 0;
     const progress = document.querySelector(".progress");
+    // <li>전체 : ${totalRows}</li>
     const progressHTML = `
       <ul class="progress-info">
-        <li>전체 : ${totalRows}</li>
-        <li>${states.fin} : ${stateCounts.fin}</li>
-        <li>${states.mod} : ${stateCounts.mod}</li>
-        <li>${states.del} : ${stateCounts.del}</li>
-        <li>${states.wtn} : ${stateCounts.wtn}</li>
-        <li>${states.chk} : ${stateCounts.chk}</li>
-        <li>${states.ing} : ${stateCounts.ing}</li>
+        <div class="progress-wrap">
+          <li class="fin">${states.fin} : ${stateCounts.fin}</li>
+          <li class="mod">${states.mod} : ${stateCounts.mod}</li>
+          <li class="del">${states.del} : ${stateCounts.del}</li>
+        </div>
+        <div class="progress-wrap">
+          <li class="wtn">${states.wtn} : ${stateCounts.wtn}</li>
+          <li class="chk">${states.chk} : ${stateCounts.chk}</li>
+          <li class="ing">${states.ing} : ${stateCounts.ing}</li>
+        </div>
       </ul>
       <div class="progress-bar">
         <div class="text">${totalPercentage}%</div>  

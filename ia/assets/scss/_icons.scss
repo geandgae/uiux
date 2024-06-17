@@ -116,6 +116,15 @@
 .mat-icon-layout::before {
   content: "\e66b";
 }
+.mat-icon-leftArrow::before {
+  content: "\e314";
+}
+.mat-icon-rightArrow::before {
+  content: "\e315";
+}
+.mat-icon-assignmentAdd::before {
+  content: "\f848";
+}
 .mat-icon-star::before {
   content: "\e885";
   font-variation-settings: 
