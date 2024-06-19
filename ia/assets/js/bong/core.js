@@ -233,9 +233,6 @@ const core = (() => {
       renderTable(dataClone);
     };
 
-    // selectAuthor.addEventListener("change", updateFilteredData);
-    // selectState.addEventListener("change", updateFilteredData);
-    // input.addEventListener("keyup", updateFilteredData);
     if (selectAuthor && selectState && input) {
       // 요소가 존재할 때만 이벤트 리스너를 등록합니다.
       selectAuthor.addEventListener("change", updateFilteredData);
@@ -244,8 +241,6 @@ const core = (() => {
     } else {
       console.error("One or more elements not found.");
     }
-
-    
   };
 
   // updateTableIndex : 전체개수
@@ -256,7 +251,7 @@ const core = (() => {
 
     // 전체 글 개수
     if (counter) {
-      counter.innerHTML = `총 ${length} 개`;
+      counter.innerHTML = `Total ${length}`;
     }
 
     // 글번호
@@ -312,10 +307,18 @@ const core = (() => {
     });
 
     // 진행상태 퍼센트 계산
+    // bond barTextPosition 추가함
     const totalPercentage = totalRows > 0 ? Math.round((stateCounts.fin / totalRows) * 100) : 0;
     const progress = document.querySelector(".progress");
+    const barTextPosition = totalPercentage > 8 ? (totalPercentage / 2 - 7) : 0;
     // <li>전체 : ${totalRows}</li>
     const progressHTML = `
+      <div class="progress-bar">
+        <div class="bar">
+          <div class="text" style="left:${barTextPosition}%">${totalPercentage}%</div>  
+          <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${totalPercentage}" style="width:${totalPercentage}%"></span>
+        </div>  
+      </div> 
       <ul class="progress-info">
         <div class="progress-wrap">
           <li class="fin">${states.fin} : ${stateCounts.fin}</li>
@@ -327,13 +330,7 @@ const core = (() => {
           <li class="chk">${states.chk} : ${stateCounts.chk}</li>
           <li class="ing">${states.ing} : ${stateCounts.ing}</li>
         </div>
-      </ul>
-      <div class="progress-bar">
-        <div class="text">${totalPercentage}%</div>  
-        <div class="bar">
-          <span role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${totalPercentage}" style="width:${totalPercentage}%"></span>
-        </div>  
-      </div>  
+      </ul> 
     `;
     progress.innerHTML = progressHTML;
   };
