@@ -210,6 +210,16 @@ const core = (() => {
       }
     };
 
+    // 활성화된 버튼에 active 클래스 추가하는 함수
+    const activateButton = (selectedButton) => {
+      if (selectedButton && selectedButton.classList) {
+        categoryButtons.forEach((button) => {
+          button.classList.remove("active");
+        });
+        selectedButton.classList.add("active");
+      }
+    };
+
     const filterByCategory = async (event) => {
       displayLoading();
       const categoryId = event.currentTarget.id;
