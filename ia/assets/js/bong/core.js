@@ -191,6 +191,16 @@ const core = (() => {
     const categoryButtons = document.querySelectorAll(".category .btn");
     const articles = document.querySelectorAll(".article");
 
+    // 활성화된 버튼에 active 클래스 추가하는 함수
+    const activateButton = (selectedButton) => {
+      if (selectedButton && selectedButton.classList) {
+        categoryButtons.forEach((button) => {
+          button.classList.remove("active");
+        });
+        selectedButton.classList.add("active");
+      }
+    };
+
     const filterByCategory = async (event) => {
       displayLoading();
       const categoryId = event.currentTarget.id;
@@ -212,6 +222,9 @@ const core = (() => {
       });
       dataClone = filterData(dataOrign, "");
       renderTable(dataClone);
+
+      // 클릭된 버튼을 활성화 상태로 변경
+      activateButton(event.target); 
     };
 
     categoryButtons.forEach((item) => {
