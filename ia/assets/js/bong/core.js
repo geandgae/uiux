@@ -175,7 +175,7 @@ const core = (() => {
   // initCategoryButtons : 카테고리 초기화
   const initCategoryButtons = () => {
     const categoryContainer = document.querySelector(".category");
-    const categorybuttons = [`<li><button type="button" class="btn" id="table_all">전체보기</button></li>`];
+    const categorybuttons = [`<li><button type="button" class="btn active" id="table_all">전체보기</button></li>`];
     for (const item in ctg) {
       const id = ctg[item].id;
       const title = ctg[item].title;
@@ -190,6 +190,25 @@ const core = (() => {
   const categoryFilter = () => {
     const categoryButtons = document.querySelectorAll(".category .btn");
     const articles = document.querySelectorAll(".article");
+    const tableAllBtn = document.querySelector(".category #table_all");
+
+    // 활성화된 버튼에 active 클래스 추가하는 함수
+    const activateButton = (selectedButton) => {
+      if (selectedButton && selectedButton.classList) {
+        categoryButtons.forEach((button) => {
+          button.classList.remove("active");
+        });
+        // bong 추가
+        if(selectedButton.classList.contains("sideBtn")) {
+          categoryButtons.forEach((button) => {
+            button.classList.remove("active");
+          });
+          tableAllBtn.classList.add("active");
+        } else {
+          selectedButton.classList.add("active");
+        }
+      }
+    };
 
     const filterByCategory = async (event) => {
       displayLoading();
@@ -212,11 +231,18 @@ const core = (() => {
       });
       dataClone = filterData(dataOrign, "");
       renderTable(dataClone);
-    };
 
+      // 클릭된 버튼을 활성화 상태로 변경
+      activateButton(event.target);
+    };
+    
     categoryButtons.forEach((item) => {
       item.addEventListener("click", filterByCategory);
     });
+    
+    //bong 추가
+    const sidebtn = document.querySelector(".sidebar-button .btn");
+    sidebtn.addEventListener("click", filterByCategory);
   };
 
   // initSelectFilter : 선택필터 초기화
