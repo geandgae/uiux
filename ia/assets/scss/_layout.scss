@@ -96,18 +96,26 @@ body {
             @include flex-center;
             justify-content: flex-start;
             gap: 3px;
-            input#keyword{
-            @include font-size(basic);
-            background-color: $color-primary-medium;
-            border: none;
-            border-radius: 6px;
-            padding: 6px 4px;
-          }
-          label[for=table_search] {
-            background-color: $color-primary-medium;
-            color: $color-white;
-            padding: 6px;
-            border-radius: 6px;
+            input {
+              outline: none;
+              color: $color-white;
+              @include font-size(basic);
+              background-color: $color-primary-medium;
+              border: none;
+              border-radius: 6px;
+              padding: 6px 6px;
+              &::placeholder {
+                color: $color-gray-500;
+              }
+              &:focus {
+                color: $color-white;
+              }
+            }
+            label[for=table_search] {
+              background-color: $color-primary-medium;
+              color: $color-white;
+              padding: 6px;
+              border-radius: 6px;
             }
           }
         }
@@ -137,7 +145,13 @@ body {
             @include flex-center;
             gap: 30px;
             li {
-              color: $color-primary-light;
+              color: $color-primary-semiLight;
+              &:hover{
+                color: $color-primary-light;
+              }
+              &::before {
+                display: block;
+              }
             }
           }
         }
@@ -212,9 +226,17 @@ body {
         flex-direction: column;
         .article {
           width: 100%;
+          h2 {
+            color: $color-gray-900;
+            margin-bottom: 8px;
+            font-weight: 700;
+            @include font-size(basic);
+          }
           .table {
             width: 100%;
             background-color: $color-white;
+            @include font-size(s);
+            margin-bottom: 50px;
             @media (max-width: 1330px) {
               & {
                 display: block;
@@ -226,17 +248,17 @@ body {
             }
             thead {
               width: 100%;
-              border-bottom: 1px solid gray;
+              border-bottom: 1px solid $color-gray-200;
 
             }
             tr {
               width: 100%;
               th {
                 font-weight: 600;
-                padding: 15px 12px;
+                padding: 18px 12px;
               }
               td {
-                padding: 15px 12px;
+                padding: 6px 12px;
                 height: auto;
                 &.note {
                   button {
@@ -284,9 +306,7 @@ body {
             align-items: flex-start;
             color: $color-gray-900;
             font-weight: 700;
-            &::after {
-              content: "2024-06-17";
-              display: block;
+            p {
               font-weight: 400;
               @include font-size(s);
               color: $color-gray-500;

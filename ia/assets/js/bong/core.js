@@ -277,8 +277,17 @@ const core = (() => {
 
     // 전체 글 개수
     if (counter) {
-      counter.innerHTML = `Total ${length}`;
+      // bong 추가
+      // get today
+      let date = new Date();
+      let year = date.getFullYear();
+      let month = ("0" + (1 + date.getMonth())).slice(-2);
+      let day = ("0" + date.getDate()).slice(-2);
+      const totalDate = year + "-" + month + "-" + day;
+      console.log(totalDate);
+      counter.innerHTML = `Total ${length} <p>${totalDate}</p>`;
     }
+
 
     // 글번호
     cells.forEach((item, index) => {
