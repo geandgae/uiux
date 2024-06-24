@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tag Manager</title>
+  <style>
+    .auto-tag {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .tag-input, .tag-output {
+      margin-bottom: 20px;
+    }
+    .tag-input label, .tag-output select {
+      margin-right: 10px;
+    }
+    .tag-view {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="auto-tag">
+    <div class="tag-input">
+      <div>
+        <label for="title">제목</label>
+        <input type="text" id="title">
+      </div>
+      <div>
+        <label for="content">내용</label>
+        <textarea id="content"></textarea>
+      </div>
+      <button id="input-button">입력</button>
+    </div>
+    <div class="tag-output">
+      <select id="tag-select">
+        <option value="">태그를 선택하세요</option>
+      </select>
+      <div class="tag-view" id="tag-view"></div>
+      <button id="add-button">추가</button>
+      <button id="copy-button">복사</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var titleInput = document.getElementById('title');
+      var contentInput = document.getElementById('content');
+      var inputButton = document.getElementById('input-button');
+      var tagSelect = document.getElementById('tag-select');
+      var tagView = document.getElementById('tag-view');
+      var addButton = document.getElementById('add-button');
+      var copyButton = document.getElementById('copy-button');
+
+      var tags = JSON.parse(localStorage.getItem('tags')) || [];
+      var viewContent = [];
+
+      function updateTagSelect() {
+        tagSelect.innerHTML = '<option value="">태그를 선택하세요</option>';
+        tags.forEach(function(tag, index) {
+          var option = document.createElement('option');
+          option.value = tag.title;
+          option.textContent = tag.title;
+          tagSelect.appendChild(option);
+        });
+      }
+
+      function handleInput() {
+        var title = titleInput.value;
+        var content = contentInput.value;
+        var newTag = { title: title, content: content };
+        tags.push(newTag);
+        localStorage.setItem('tags', JSON.stringify(tags));
+        titleInput.value = '';
+        contentInput.value = '';
+        updateTagSelect();
+      }
+
+      function handleAdd() {
+        var selectedTitle = tagSelect.value;
+        var tag = tags.find(function(tag) {
+          return tag.title === selectedTitle;
+        });
+        if (tag) {
+          viewContent.push(tag.content);
+          var div = document.createElement('div');
+          div.textContent = tag.content;
+          tagView.appendChild(div);
+        }
+      }
+
+      function handleCopy() {
+        var contentToCopy = '<html>\n' + viewContent.join('\n') + '\n</html>';
+        navigator.clipboard.writeText(contentToCopy)
+          .then(function() {
+            console.log('클립보드에 복사되었습니다.');
+          })
+          .catch(function(err) {
+            console.log('복사하는 중에 오류가 발생했습니다.');
+          });
+      }
+
+      inputButton.addEventListener('click', handleInput);
+      addButton.addEventListener('click', handleAdd);
+      copyButton.addEventListener('click', handleCopy);
+
+      updateTagSelect();
+    })();
+  </script>
+</body>
+</html>
