@@ -177,7 +177,40 @@
           tagView.innerHTML = "";
         };
 
-        const handleCopy = () => {
+        const handleCopy = async () => {
+          const contentToCopy = `<html>\n${viewContent.join("\n")}\n</html>`;
+          try {
+            await navigator.clipboard.writeText(contentToCopy);
+            console.log("클립보드에 복사되었습니다.");
+            // 비동기 테스트
+            const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+            const test = async (v, t) => {
+              await delay(t); // t 밀리초 동안 기다림
+              return v;
+            };
+            const data1 = await test("response1", 1000);
+            const data2 = await test("response2", 2000);
+            const data3 = await test("response3", 3000);
+            console.log(data1, data2, data3);
+          } catch (err) {
+            console.error("복사하는 중에 오류가 발생했습니다.", err);
+            // throw error;
+          }
+        };
+        // 오류테스트용
+        const handleCopyTest = async () => {
+          const contentToCopy = `<html>\n${viewContent.join("\n")}\n</html>`;
+          try {
+            // 가짜 오류 시뮬레이션을 위해 await를 사용하지 않고 throw로 예외를 직접 발생시킵니다.
+            throw new Error("클립보드 복사 실패: 권한이 없습니다.");
+            await navigator.clipboard.writeText(contentToCopy);
+            console.log("클립보드에 복사되었습니다.");
+          } catch (err) {
+            console.error("복사하는 중에 오류가 발생했습니다.", err);
+          }
+        };
+        // Promise
+        const handleCopyPromise = () => {
           const contentToCopy = `<html>\n${viewContent.join("\n")}\n</html>`;
           navigator.clipboard
             .writeText(contentToCopy)

@@ -642,3 +642,58 @@ window.addEventListener("DOMContentLoaded", function () {
 
   console.log("==================== start!! ====================");
 });
+
+// // async 예제 비동기 처리에만 사용 이거보고 로딩부분 수정
+// async function fetchData() {
+//   try {
+//     // 데이터 로딩 시작
+//     showLoadingIndicator();
+
+//     // 비동기 작업 실행
+//     const response = await fetch('https://api.example.com/data');
+//     const data = await response.json();
+
+//     // 데이터 로딩 완료 후 처리
+//     processData(data);
+//   } catch (error) {
+//     console.error('데이터 로딩 중 오류 발생:', error);
+//     showError('데이터를 로드하는 동안 오류가 발생했습니다.');
+//   } finally {
+//     // 로딩 상태 숨기기
+//     hideLoadingIndicator();
+//   }
+// }
+
+// // 에러처리 예
+// async function fetchData() {
+//   try {
+//     showLoadingIndicator();
+
+//     const response = await fetch('https://api.example.com/data');
+//     if (!response.ok) {
+//       throw new Error('서버에서 데이터를 가져오는 데 문제가 발생했습니다.');
+//     }
+//     const data = await response.json();
+
+//     processData(data);
+//   } catch (error) {
+//     console.error('데이터 로딩 중 오류 발생:', error);
+//     showError('데이터를 로드하는 동안 오류가 발생했습니다.');
+//   } finally {
+//     hideLoadingIndicator();
+//   }
+// }
+
+// function showError(message) {
+//   // 오류 메시지를 화면에 표시하는 로직
+// }
+
+// function showLoadingIndicator() {
+//   const loader = document.getElementById('loader');
+//   loader.style.display = 'block';
+// }
+
+// function hideLoadingIndicator() {
+//   const loader = document.getElementById('loader');
+//   loader.style.display = 'none';
+// }
