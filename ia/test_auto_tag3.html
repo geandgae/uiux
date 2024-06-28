@@ -1,189 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tag Manager</title>
-  <style>
-    input, textarea {
-      width: 90%;
-      padding: 10px;
-    }
-    .auto-tag {
-      margin: 20px;
-    }
-    .tag-input, .tag-output {
-      margin-bottom: 20px;
-    }
-    .tag-input label {
-      margin-right: 10px;
-    }
-    .tag-view {
-      margin-top: 20px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      min-height: 50px;
-      padding: 10px;
-    }
-    .tag-view div {
-      margin-bottom: 5px;
-      border: 1px solid #ccc;
-      padding: 5px;
-    }
-    .tag-codes {
-      border: 1px solid #ccc;
-      padding: 10px 20px;
-      margin-top: 20px;
-      min-height: 50px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .tag-codes > span {
-      border: 1px solid #ccc;
-      padding: 5px;
-      font-size: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <div class="auto-tag">
-    <div class="tag-input">
-      <div>
-        <label for="title">제목</label>
-        <input type="text" id="title">
-      </div>
-      <div>
-        <label for="content">내용</label>
-        <textarea id="content"></textarea>
-      </div>
-      <button id="input-button">입력</button>
-    </div>
-    <div class="tag-output">
-      <div class="tag-codes" id="tag-select">
-        <!-- 스팬 태그들이 여기에 동적으로 추가됩니다 -->
-      </div>
-      <div class="tag-view" id="tag-view"></div>
-      <button id="undo-button">마지막줄삭제</button>
-      <button id="remove-button">삭제</button>
-      <button id="copy-button">복사</button>
-    </div>
-  </div>
-
-  <script>
-    (function() {
-      var titleInput = document.getElementById('title');
-      var contentInput = document.getElementById('content');
-      var inputButton = document.getElementById('input-button');
-      var tagSelect = document.getElementById('tag-select');
-      var tagView = document.getElementById('tag-view');
-      var undoButton = document.getElementById('undo-button');
-      var removeButton = document.getElementById('remove-button');
-      var copyButton = document.getElementById('copy-button');
-
-      var tags = JSON.parse(localStorage.getItem('tags')) || [];
-      var viewContent = [];
-
-      function updateTagSelect() {
-        tagSelect.innerHTML = '';
-        tags.forEach(function(tag) {
-          var span = document.createElement('span');
-          span.textContent = tag.title;
-          span.dataset.content = tag.content;
-          span.draggable = true; // 드래그 가능하게 설정
-          span.addEventListener('dragstart', handleDragStart);
-          span.addEventListener('click', handleTagClick); // 클릭 이벤트 추가
-          tagSelect.appendChild(span);
-        });
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tag Manager</title>
+    <style>
+      body {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
       }
+      input,
+      textarea {
+        width: 90%;
+        padding: 10px;
+      }
+      .auto-tag {
+        margin: 20px;
+      }
+      .tag-input,
+      .tag-output {
+        margin-bottom: 20px;
+      }
+      .tag-input label {
+        margin-right: 10px;
+      }
+      .tag-view {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        min-height: 50px;
+        padding: 30px;
+      }
+      .tag-view div {
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        padding: 5px;
+      }
+      .tag-codes {
+        border: 1px solid #ccc;
+        padding: 10px 20px;
+        margin-top: 20px;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .tag-codes > span {
+        border: 1px solid #ccc;
+        padding: 5px;
+        font-size: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auto-tag">
+      <div class="tag-input">
+        <div>
+          <label for="title">제목</label>
+          <input type="text" id="title" />
+        </div>
+        <div>
+          <label for="content">내용</label>
+          <textarea id="content"></textarea>
+        </div>
+        <button id="input-button">입력</button>
+      </div>
+      <div class="tag-output">
+        <div class="tag-codes" id="tag-select">
+          <!-- 스팬 태그들이 여기에 동적으로 추가됩니다 -->
+        </div>
+        <div class="tag-view" id="tag-view"></div>
+        <button id="undo-button">마지막줄삭제</button>
+        <button id="remove-button">삭제</button>
+        <button id="copy-button">복사</button>
+      </div>
+    </div>
 
-      function handleInput() {
-        var title = titleInput.value;
-        var content = contentInput.value;
-        var newTag = { title: title, content: content };
-        tags.push(newTag);
-        localStorage.setItem('tags', JSON.stringify(tags));
-        titleInput.value = '';
-        contentInput.value = '';
+    <script>
+      // localStorage.clear();
+      (() => {
+        // DOM 요소 선택
+        const titleInput = document.getElementById("title");
+        const contentInput = document.getElementById("content");
+        const inputButton = document.getElementById("input-button");
+        const tagSelect = document.getElementById("tag-select");
+        const tagView = document.getElementById("tag-view");
+        const undoButton = document.getElementById("undo-button");
+        const removeButton = document.getElementById("remove-button");
+        const copyButton = document.getElementById("copy-button");
+
+        // 태그 목록 초기화
+        let tags = JSON.parse(localStorage.getItem("tags")) || [];
+        let viewContent = [];
+
+        // 로컬에 저장
+        const handleInput = () => {
+          const title = titleInput.value;
+          const content = contentInput.value;
+          const newTag = { title, content }; // 단축 속성명 사용
+          tags.push(newTag);
+          localStorage.setItem("tags", JSON.stringify(tags));
+          titleInput.value = "";
+          contentInput.value = "";
+          updateTagSelect();
+        };
+
+        // 태그 목록 업데이트
+        const updateTagSelect = () => {
+          tagSelect.innerHTML = "";
+          tags.forEach((tag) => {
+            const span = document.createElement("span");
+            span.textContent = tag.title;
+            span.dataset.content = tag.content;
+            span.draggable = true; // 드래그 가능하게 설정
+            span.addEventListener("dragstart", handleDragStart);
+            span.addEventListener("click", handleTagClick); // 클릭 이벤트 추가
+            tagSelect.appendChild(span);
+          });
+        };
+
+        // drag 이벤트
+        const handleDragStart = (event) => {
+          event.dataTransfer.setData("text/plain", event.target.dataset.content);
+        };
+        const handleDragOver = (event) => {
+          event.preventDefault();
+        };
+        const handleDrop = (event) => {
+          event.preventDefault();
+          const tagContent = event.dataTransfer.getData("text/plain");
+          addTagToView(tagContent, event.clientY);
+        };
+
+        // click 이벤트
+        const handleTagClick = (event) => {
+          if (event.target.tagName === "SPAN") {
+            const tagContent = event.target.dataset.content;
+            addTagToView(tagContent, null); // 클릭 이벤트에서는 null을 전달하여 순차적으로 추가하도록 설정
+          }
+        };
+
+        // addTagToView
+        const addTagToView = (tagContent, dropY) => {
+          const div = document.createElement("div");
+          div.textContent = tagContent;
+
+          if (dropY !== null) {
+            const children = Array.from(tagView.children);
+            let insertIndex = children.findIndex((child) => {
+              const rect = child.getBoundingClientRect();
+              return dropY < rect.top + rect.height / 2;
+            });
+            if (insertIndex === -1) insertIndex = children.length; // 마지막에 추가
+            tagView.insertBefore(div, tagView.children[insertIndex]);
+            viewContent.splice(insertIndex, 0, tagContent);
+          } else {
+            tagView.appendChild(div);
+            viewContent.push(tagContent);
+          }
+        };
+
+        // 삭제 및 복사
+        const handleUndo = () => {
+          if (viewContent.length > 0) {
+            viewContent.pop();
+            tagView.removeChild(tagView.lastChild);
+          }
+        };
+
+        const handleRemove = () => {
+          viewContent = [];
+          tagView.innerHTML = "";
+        };
+
+        const handleCopy = () => {
+          const contentToCopy = `<html>\n${viewContent.join("\n")}\n</html>`;
+          navigator.clipboard
+            .writeText(contentToCopy)
+            .then(() => {
+              console.log("클립보드에 복사되었습니다.");
+            })
+            .catch((err) => {
+              console.log("복사하는 중에 오류가 발생했습니다.");
+            });
+        };
+
+        inputButton.addEventListener("click", handleInput);
+        tagView.addEventListener("dragover", handleDragOver);
+        tagView.addEventListener("drop", handleDrop);
+        undoButton.addEventListener("click", handleUndo);
+        removeButton.addEventListener("click", handleRemove);
+        copyButton.addEventListener("click", handleCopy);
+
         updateTagSelect();
-      }
-
-      function handleDragStart(event) {
-        event.dataTransfer.setData('text/plain', event.target.dataset.content);
-      }
-
-      function handleDragOver(event) {
-        event.preventDefault();
-      }
-
-      function handleDrop(event) {
-        event.preventDefault();
-        var tagContent = event.dataTransfer.getData('text/plain');
-        addTagToView(tagContent, event.clientY);
-      }
-
-      function handleTagClick(event) {
-        if (event.target.tagName === 'SPAN') {
-          var tagContent = event.target.dataset.content;
-          addTagToView(tagContent, null); // 클릭 이벤트에서는 null을 전달하여 순차적으로 추가하도록 설정
-        }
-      }
-
-      function addTagToView(tagContent, dropY) {
-        var div = document.createElement('div');
-        div.textContent = tagContent;
-        // div.addEventListener('dragstart', handleDragStart);
-        // div.draggable = true;
-        
-        if (dropY !== null) {
-          var children = Array.from(tagView.children);
-          var insertIndex = children.findIndex(function(child) {
-            var rect = child.getBoundingClientRect();
-            return dropY < rect.top + rect.height / 2;
-          });
-          if (insertIndex === -1) insertIndex = children.length; // 마지막에 추가
-          tagView.insertBefore(div, tagView.children[insertIndex]);
-          viewContent.splice(insertIndex, 0, tagContent);
-        } else {
-          tagView.appendChild(div);
-          viewContent.push(tagContent);
-        }
-      }
-
-      function handleUndo() {
-        if (viewContent.length > 0) {
-          viewContent.pop();
-          tagView.removeChild(tagView.lastChild);
-        }
-      }
-
-      function handleRemove() {
-        viewContent = [];
-        tagView.innerHTML = '';
-      }
-
-      function handleCopy() {
-        var contentToCopy = '<html>\n' + viewContent.join('\n') + '\n</html>';
-        navigator.clipboard.writeText(contentToCopy)
-          .then(function() {
-            console.log('클립보드에 복사되었습니다.');
-          })
-          .catch(function(err) {
-            console.log('복사하는 중에 오류가 발생했습니다.');
-          });
-      }
-
-      inputButton.addEventListener('click', handleInput);
-      tagView.addEventListener('dragover', handleDragOver);
-      tagView.addEventListener('drop', handleDrop);
-      undoButton.addEventListener('click', handleUndo);
-      removeButton.addEventListener('click', handleRemove);
-      copyButton.addEventListener('click', handleCopy);
-
-      updateTagSelect();
-    })();
-  </script>
-</body>
+      })();
+    </script>
+  </body>
 </html>

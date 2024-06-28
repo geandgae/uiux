@@ -25,13 +25,12 @@
         margin-bottom: 10px;
         border: 1px solid #ccc;
         min-height: 50px;
-        padding: 10px;
+        padding: 30px;
       }
       .tag-view div {
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         border: 1px solid #ccc;
         padding: 5px;
-        cursor: move;
       }
       .tag-codes {
         border: 1px solid #ccc;
@@ -93,23 +92,23 @@
     </div>
 
     <script>
-      (function () {
-        var titleInput = document.getElementById("title");
-        var contentInput = document.getElementById("content");
-        var inputButton = document.getElementById("input-button");
-        var tagSelect = document.getElementById("tag-select");
-        var tagView = document.getElementById("tag-view");
-        var undoButton = document.getElementById("undo-button");
-        var removeButton = document.getElementById("remove-button");
-        var copyButton = document.getElementById("copy-button");
+      (() => {
+        const titleInput = document.getElementById("title");
+        const contentInput = document.getElementById("content");
+        const inputButton = document.getElementById("input-button");
+        const tagSelect = document.getElementById("tag-select");
+        const tagView = document.getElementById("tag-view");
+        const undoButton = document.getElementById("undo-button");
+        const removeButton = document.getElementById("remove-button");
+        const copyButton = document.getElementById("copy-button");
 
-        var tags = JSON.parse(localStorage.getItem("tags")) || [];
-        var viewContent = [];
+        let tags = JSON.parse(localStorage.getItem("tags")) || [];
+        let viewContent = [];
 
-        function updateTagSelect() {
+        const updateTagSelect = () => {
           tagSelect.innerHTML = "";
-          tags.forEach(function (tag) {
-            var span = document.createElement("span");
+          tags.forEach((tag) => {
+            const span = document.createElement("span");
             span.textContent = tag.title;
             span.dataset.content = tag.content;
             // span.draggable = true; // 드래그 가능하게 설정
@@ -117,52 +116,52 @@
             span.addEventListener("click", handleTagClick); // 클릭 이벤트 추가
             tagSelect.appendChild(span);
           });
-        }
+        };
 
-        function handleInput() {
-          var title = titleInput.value;
-          var content = contentInput.value;
-          var newTag = { title: title, content: content };
+        const handleInput = () => {
+          const title = titleInput.value;
+          const content = contentInput.value;
+          const newTag = { title, content }; // 단축 속성명 사용
           tags.push(newTag);
           localStorage.setItem("tags", JSON.stringify(tags));
           titleInput.value = "";
           contentInput.value = "";
           updateTagSelect();
-        }
+        };
 
-        function handleDragStart(event) {
+        const handleDragStart = (event) => {
           event.dataTransfer.setData("text/plain", event.target.dataset.content);
-        }
+        };
 
-        function handleDragOver(event) {
+        const handleDragOver = (event) => {
           event.preventDefault();
-        }
+        };
 
-        function handleDrop(event) {
+        const handleDrop = (event) => {
           event.preventDefault();
-          var tagContent = event.dataTransfer.getData("text/plain");
-          var draggedIndex = viewContent.indexOf(tagContent);
-          var dropY = event.clientY;
+          const tagContent = event.dataTransfer.getData("text/plain");
+          const draggedIndex = viewContent.indexOf(tagContent);
+          const dropY = event.clientY;
           moveTagInView(tagContent, draggedIndex, dropY);
-        }
+        };
 
-        function handleTagClick(event) {
+        const handleTagClick = (event) => {
           if (event.target.tagName === "SPAN") {
-            var tagContent = event.target.dataset.content;
+            const tagContent = event.target.dataset.content;
             addTagToView(tagContent, null); // 클릭 이벤트에서는 null을 전달하여 순차적으로 추가하도록 설정
           }
-        }
+        };
 
-        function addTagToView(tagContent, dropY) {
-          var div = document.createElement("div");
+        const addTagToView = (tagContent, dropY) => {
+          const div = document.createElement("div");
           div.textContent = tagContent;
           div.addEventListener("dragstart", handleDivDragStart);
           div.draggable = true;
 
           if (dropY !== null) {
-            var children = Array.from(tagView.children);
-            var insertIndex = children.findIndex(function (child) {
-              var rect = child.getBoundingClientRect();
+            const children = Array.from(tagView.children);
+            let insertIndex = children.findIndex((child) => {
+              const rect = child.getBoundingClientRect();
               return dropY < rect.top + rect.height / 2;
             });
             if (insertIndex === -1) insertIndex = children.length; // 마지막에 추가
@@ -172,53 +171,53 @@
             tagView.appendChild(div);
             viewContent.push(tagContent);
           }
-        }
+        };
 
-        function moveTagInView(tagContent, draggedIndex, dropY) {
-          var children = Array.from(tagView.children);
-          var dropIndex = children.findIndex(function (child) {
-            var rect = child.getBoundingClientRect();
+        const moveTagInView = (tagContent, draggedIndex, dropY) => {
+          const children = Array.from(tagView.children);
+          let dropIndex = children.findIndex((child) => {
+            const rect = child.getBoundingClientRect();
             return dropY < rect.top + rect.height / 2;
           });
           if (dropIndex === -1) dropIndex = children.length; // 마지막에 추가
 
           // Remove from current position
-          var div = tagView.children[draggedIndex];
+          const div = tagView.children[draggedIndex];
           tagView.removeChild(div);
           viewContent.splice(draggedIndex, 1);
 
           // Insert at new position
           tagView.insertBefore(div, tagView.children[dropIndex]);
           viewContent.splice(dropIndex, 0, tagContent);
-        }
+        };
 
-        function handleDivDragStart(event) {
+        const handleDivDragStart = (event) => {
           event.dataTransfer.setData("text/plain", event.target.textContent);
-        }
+        };
 
-        function handleUndo() {
+        const handleUndo = () => {
           if (viewContent.length > 0) {
             viewContent.pop();
             tagView.removeChild(tagView.lastChild);
           }
-        }
+        };
 
-        function handleRemove() {
+        const handleRemove = () => {
           viewContent = [];
           tagView.innerHTML = "";
-        }
+        };
 
-        function handleCopy() {
-          var contentToCopy = "<html>\n" + viewContent.join("\n") + "\n</html>";
+        const handleCopy = () => {
+          const contentToCopy = `<html>\n${viewContent.join("\n")}\n</html>`;
           navigator.clipboard
             .writeText(contentToCopy)
-            .then(function () {
+            .then(() => {
               console.log("클립보드에 복사되었습니다.");
             })
-            .catch(function (err) {
+            .catch((err) => {
               console.log("복사하는 중에 오류가 발생했습니다.");
             });
-        }
+        };
 
         inputButton.addEventListener("click", handleInput);
         tagView.addEventListener("dragover", handleDragOver);
